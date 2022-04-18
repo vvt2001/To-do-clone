@@ -9,18 +9,43 @@ import Foundation
 
 class List: Equatable{
     var name: String
-    var unfinishedTask = [Task]()
-    var finishedTask = [Task]()
-    var importantTask = [Task]()
+    var allTask = [Task]()
+    var unfinishedTask: [Task]{
+        var unfinished = [Task]()
+        for task in allTask{
+            if task.isFinished == false{
+                unfinished.append(task)
+            }
+        }
+        return unfinished
+    }
+    var finishedTask: [Task]{
+        var finished = [Task]()
+        for task in allTask{
+            if task.isFinished == true{
+                finished.append(task)
+            }
+        }
+        return finished
+    }
+    var importantTask: [Task]{
+        var important = [Task]()
+        for task in allTask{
+            if task.isImportant == true{
+                important.append(task)
+            }
+        }
+        return important
+    }
     
     init(name: String){
         self.name = name
     }
     
-    @discardableResult func createTask(name: String!) -> Task{
+    @discardableResult func createTask(name: String!, type: taskType) -> Task{
         let newTask: Task
-        newTask = Task(name: name)
-        unfinishedTask.append(newTask)
+        newTask = Task(name: name, type: type)
+        allTask.append(newTask)
         return newTask
     }
     

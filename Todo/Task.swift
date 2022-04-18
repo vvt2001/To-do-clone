@@ -12,21 +12,23 @@ class Task: Equatable{
     var name: String
     var isFinished: Bool = false
     var isImportant: Bool = false
+    var type: taskType
     
-    init(name: String){
+    init(name: String, type: taskType){
         self.name = name
-    }
-    
-    enum type{
-        case myDay
-        case Important
-        case planned
-        case assignToMe
-        case tasks
+        self.type = type
     }
     
     static func ==(lhs: Task, rhs: Task) -> Bool {
         return lhs.name == rhs.name
             && lhs.name == rhs.name
     }
+}
+enum taskType{
+    case myDay
+    case Important
+    case planned
+    case assignToMe
+    case tasks
+    case listed
 }

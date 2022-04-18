@@ -25,7 +25,7 @@
                 <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="mIP-ng-SOv">
                     <rect key="frame" x="0.0" y="0.0" width="414" height="13"/>
                     <items>
-                        <navigationItem title="Title" id="pDH-CG-jrx">
+                        <navigationItem id="pDH-CG-jrx">
                             <rightBarButtonItems>
                                 <barButtonItem title="Item" id="D9g-Xu-G1h"/>
                                 <barButtonItem title="Item" id="2DK-2O-b5I"/>
@@ -44,15 +44,15 @@
                             <rect key="frame" x="0.0" y="810" width="414" height="31"/>
                             <subviews>
                                 <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2Hm-sI-xYp">
-                                    <rect key="frame" x="0.0" y="0.0" width="67" height="31"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="43.5" height="31"/>
                                     <state key="normal" title="Button"/>
-                                    <buttonConfiguration key="configuration" style="plain" title="Button"/>
+                                    <buttonConfiguration key="configuration" style="plain" image="plus" catalog="system" title=""/>
                                     <connections>
                                         <action selector="addTask:" destination="-1" eventType="touchUpInside" id="UzY-dS-AJR"/>
                                     </connections>
                                 </button>
-                                <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Sch-X4-yeV">
-                                    <rect key="frame" x="67" y="0.0" width="347" height="31"/>
+                                <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Add a Task" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Sch-X4-yeV">
+                                    <rect key="frame" x="43.5" y="0.0" width="370.5" height="31"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                     <textInputTraits key="textInputTraits"/>
                                 </textField>
@@ -82,6 +82,7 @@
         </stackView>
     </objects>
     <resources>
+        <image name="plus" catalog="system" width="128" height="113"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

@@ -10,19 +10,79 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="TasksViewController" customModule="Todo" customModuleProvider="target">
             <connections>
-                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+                <outlet property="addButton" destination="qJW-iz-mg7" id="C2e-bn-wnd"/>
+                <outlet property="addTaskField" destination="bSb-8x-4t0" id="fVi-qD-49q"/>
+                <outlet property="navBar" destination="NcK-io-2Lv" id="7an-6Y-yeP"/>
+                <outlet property="taskTable" destination="ao8-lI-9jj" id="zFd-YY-jt8"/>
+                <outlet property="view" destination="uAX-Pd-ybp" id="ZPO-Eg-JVP"/>
             </connections>
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="uAX-Pd-ybp">
             <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-            <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>
+            <subviews>
+                <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="NcK-io-2Lv">
+                    <rect key="frame" x="0.0" y="0.0" width="414" height="13"/>
+                    <items>
+                        <navigationItem id="HQl-kA-eDz">
+                            <rightBarButtonItems>
+                                <barButtonItem title="Item" id="yEu-qO-hcU"/>
+                                <barButtonItem title="Item" id="7k7-oO-LPv"/>
+                            </rightBarButtonItems>
+                        </navigationItem>
+                    </items>
+                </navigationBar>
+                <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="7g1-ZG-Ke7">
+                    <rect key="frame" x="0.0" y="21" width="414" height="841"/>
+                    <subviews>
+                        <tableView clipsSubviews="YES" contentMode="scaleToFill" horizontalHuggingPriority="249" horizontalCompressionResistancePriority="749" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="ao8-lI-9jj">
+                            <rect key="frame" x="0.0" y="0.0" width="414" height="810"/>
+                            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        </tableView>
+                        <stackView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" horizontalCompressionResistancePriority="751" translatesAutoresizingMaskIntoConstraints="NO" id="m8z-54-93y">
+                            <rect key="frame" x="0.0" y="810" width="414" height="31"/>
+                            <subviews>
+                                <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qJW-iz-mg7">
+                                    <rect key="frame" x="0.0" y="0.0" width="43.5" height="31"/>
+                                    <state key="normal" title="Button"/>
+                                    <buttonConfiguration key="configuration" style="plain" image="plus" catalog="system" title=""/>
+                                    <connections>
+                                        <action selector="addTask:" destination="-1" eventType="touchUpInside" id="GDq-0U-8ZT"/>
+                                    </connections>
+                                </button>
+                                <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Add a Task" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="bSb-8x-4t0">
+                                    <rect key="frame" x="43.5" y="0.0" width="370.5" height="31"/>
+                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                    <textInputTraits key="textInputTraits"/>
+                                </textField>
+                            </subviews>
+                        </stackView>
+                    </subviews>
+                </stackView>
+            </subviews>
+            <viewLayoutGuide key="safeArea" id="DWp-0S-352"/>
             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-            <point key="canvasLocation" x="132" y="66"/>
+            <constraints>
+                <constraint firstItem="NcK-io-2Lv" firstAttribute="trailing" secondItem="DWp-0S-352" secondAttribute="trailing" id="2NS-Sd-8aR"/>
+                <constraint firstItem="NcK-io-2Lv" firstAttribute="top" secondItem="uAX-Pd-ybp" secondAttribute="topMargin" constant="-44" id="7bc-Zv-FhY"/>
+                <constraint firstItem="7g1-ZG-Ke7" firstAttribute="trailing" secondItem="DWp-0S-352" secondAttribute="trailing" id="LRV-k8-KpB"/>
+                <constraint firstItem="7g1-ZG-Ke7" firstAttribute="leading" secondItem="DWp-0S-352" secondAttribute="leading" id="M4I-F2-b1B"/>
+                <constraint firstItem="7g1-ZG-Ke7" firstAttribute="top" secondItem="NcK-io-2Lv" secondAttribute="bottom" constant="8" id="N0J-vO-cPX"/>
+                <constraint firstItem="7g1-ZG-Ke7" firstAttribute="bottom" secondItem="DWp-0S-352" secondAttribute="bottom" id="bT6-rY-iLf"/>
+                <constraint firstItem="NcK-io-2Lv" firstAttribute="leading" secondItem="DWp-0S-352" secondAttribute="leading" id="wd0-u3-JAM"/>
+            </constraints>
+            <point key="canvasLocation" x="531.8840579710145" y="189.50892857142856"/>
         </view>
+        <stackView opaque="NO" contentMode="scaleToFill" id="ml5-A1-1EK">
+            <rect key="frame" x="0.0" y="0.0" width="200" height="110"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <viewLayoutGuide key="safeArea" id="NTh-oT-Ben"/>
+            <point key="canvasLocation" x="268" y="-192"/>
+        </stackView>
     </objects>
     <resources>
+        <image name="plus" catalog="system" width="128" height="113"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

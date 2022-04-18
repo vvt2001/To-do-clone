@@ -8,7 +8,7 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--View Controller-->
+        <!--To do-->
         <scene sceneID="Otb-WQ-lZO">
             <objects>
                 <viewController id="oWp-uI-f8I" customClass="ViewController" customModule="Todo" customModuleProvider="target" sceneMemberID="viewController">
@@ -19,7 +19,7 @@
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="p8C-iT-Kd5">
                                 <rect key="frame" x="0.0" y="88" width="414" height="774"/>
                                 <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bRj-rl-Oev">
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bRj-rl-Oev">
                                         <rect key="frame" x="0.0" y="0.0" width="414" height="20.5"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <nil key="textColor"/>
@@ -43,14 +43,14 @@
                                         <rect key="frame" x="0.0" y="743" width="414" height="31"/>
                                         <subviews>
                                             <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3ct-xK-BhT">
-                                                <rect key="frame" x="0.0" y="0.0" width="33" height="31"/>
-                                                <buttonConfiguration key="configuration" style="plain" title="+"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="43.5" height="31"/>
+                                                <buttonConfiguration key="configuration" style="plain" image="plus" catalog="system" title=""/>
                                                 <connections>
                                                     <action selector="addList:" destination="oWp-uI-f8I" eventType="touchUpInside" id="zYT-Ko-Uyl"/>
                                                 </connections>
                                             </button>
-                                            <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Yvm-1c-tgX">
-                                                <rect key="frame" x="33" y="0.0" width="381" height="31"/>
+                                            <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="New List" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Yvm-1c-tgX">
+                                                <rect key="frame" x="43.5" y="0.0" width="370.5" height="31"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                 <textInputTraits key="textInputTraits"/>
                                             </textField>
@@ -68,7 +68,7 @@
                             <constraint firstItem="p8C-iT-Kd5" firstAttribute="leading" secondItem="eBO-Ld-cFy" secondAttribute="leading" id="hZz-DX-TpA"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="Ntb-vk-BLo"/>
+                    <navigationItem key="navigationItem" title="To do" id="Ntb-vk-BLo"/>
                     <connections>
                         <outlet property="addListField" destination="Yvm-1c-tgX" id="O10-B6-loN"/>
                         <outlet property="email" destination="bRj-rl-Oev" id="eq6-WZ-5GM"/>
@@ -100,6 +100,7 @@
         </scene>
     </scenes>
     <resources>
+        <image name="plus" catalog="system" width="128" height="113"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

@@ -20,14 +20,16 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     var listArr = [List]()
     
     @IBAction func addList(_ sender: UIButton){
-        let newList = listStore.createList(name: addListField.text)
-        var indexPath = IndexPath()
-        
-        if let index = listStore.allList.firstIndex(of: newList){
-            indexPath = IndexPath(row: index, section: 1)
+        if let taskName = addListField.text, !taskName.isEmpty{
+            let newList = listStore.createList(name: addListField.text)
+            var indexPath = IndexPath()
+            
+            if let index = listStore.allList.firstIndex(of: newList){
+                indexPath = IndexPath(row: index, section: 1)
+            }
+            selectionTable.insertRows(at: [indexPath], with: .automatic)
+            listArr.append(newList)
         }
-        selectionTable.insertRows(at: [indexPath], with: .automatic)
-        listArr.append(newList)
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
@@ -47,13 +49,20 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         //selectionTable.estimatedRowHeight = 60
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        selectionTable.reloadData()
+    }
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "SelectionTableViewCell", for: indexPath) as! SelectionTableViewCell
+        cell.taskStore = taskStore
+        cell.listStore = listStore
+        
         if indexPath.section == 0{
             cell.createOptionCell(index: indexPath.row)
         }
         else{
-            cell.createListCell(name: listStore.allList[indexPath.row].name, taskCount: "\(listStore.allList[indexPath.row].unfinishedTask.count)")
+            cell.createListCell(name: listStore.allList[indexPath.row].name, index: indexPath.row)
         }
         return cell
     }
@@ -80,10 +89,22 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                 myDayViewController.taskStore = taskStore
                 
                 navigationController?.pushViewController(myDayViewController, animated: true)
+            case 1:
+                let importantViewController = ImportantViewController(nibName: "ImportantViewController", bundle: .main)
+                importantViewController.taskStore = taskStore
                 
-//            case 4:
-//                print("alltask")
-//                let TasksViewController = TaskViewController
+                navigationController?.pushViewController(importantViewController, animated: true)
+            case 2:
+                let plannedViewController = PlannedViewController(nibName: "PlannedViewController", bundle: .main)
+                plannedViewController.taskStore = taskStore
+                
+                navigationController?.pushViewController(plannedViewController, animated: true)
+            case 4:
+                print("alltask")
+                let tasksViewController = TasksViewController(nibName: "TasksViewController", bundle: .main)
+                tasksViewController.taskStore = taskStore
+                
+                navigationController?.pushViewController(tasksViewController, animated: true)
             default:
                 print("wrong")
             }
@@ -91,6 +112,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         else{
             let listViewController = ListViewController(nibName: "ListViewController", bundle: .main)
             listViewController.list = listArr[indexPath.row]
+            listViewController.taskStore = taskStore
             navigationController?.pushViewController(listViewController, animated: true)
             
             

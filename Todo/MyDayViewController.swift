@@ -17,13 +17,14 @@ class MyDayViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var addButton: UIButton!
     
     @IBAction func addTask(_ sender: UIButton){
-        let newTask = taskStore.createTask(name: addTaskField.text)
-        var indexPath = IndexPath()
-
-        if let index = taskStore.unfinishedTask.firstIndex(of: newTask){
-            indexPath = IndexPath(row: index, section: 0)
+        if let taskName = addTaskField.text, !taskName.isEmpty{
+            let newTask = taskStore.createTask(name: addTaskField.text, type: .myDay)
+            var indexPath = IndexPath()
+            if let index = taskStore.myDayUnfinishedTask.lastIndex(of: newTask){
+                indexPath = IndexPath(row: index, section: 0)
+            }
+            taskTable.insertRows(at: [indexPath], with: .automatic)
         }
-        taskTable.insertRows(at: [indexPath], with: .automatic)
     }
     
     override func viewDidLoad() {
@@ -40,11 +41,6 @@ class MyDayViewController: UIViewController, UITextFieldDelegate {
         self.view.endEditing(true)
         return false
     }
-    
-    func numberOfSections(in tableView: UITableView) -> Int {
-        return 2
-    }
-    
 
     /*
     // MARK: - Navigation
@@ -62,60 +58,76 @@ class MyDayViewController: UIViewController, UITextFieldDelegate {
 extension MyDayViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if section == 0{
-            return taskStore.unfinishedTask.count
+            return taskStore.myDayUnfinishedTask.count
         }
         else{
-            return taskStore.finishedTask.count
+            return taskStore.myDayFinishedTask.count
         }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
         let cell = tableView.dequeueReusableCell(withIdentifier: "TaskTableViewCell", for: indexPath) as! TaskTableViewCell
         cell.delegate = self
         if indexPath.section == 0{
-            cell.createCell(name: taskStore.unfinishedTask[indexPath.row].name)
-            cell.task = taskStore.unfinishedTask[indexPath.row]
+            cell.task = taskStore.myDayUnfinishedTask[indexPath.row]
+            cell.createCell(name: taskStore.myDayUnfinishedTask[indexPath.row].name)
+            
         }
         else{
-            cell.createCell(name: taskStore.finishedTask[indexPath.row].name)
-            cell.task = taskStore.finishedTask[indexPath.row]
+            cell.task = taskStore.myDayFinishedTask[indexPath.row]
+            cell.createCell(name: taskStore.myDayFinishedTask[indexPath.row].name)
+            
         }
         return cell
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         if section == 0{
-            return "My Day"
+            return "My day"
         }
         else{
-            return "Finished"
+            if taskStore.finishedTask.count != 0{
+                return "Finished"
+            }
         }
+        return ""
+    }
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 2
     }
 }
 
 // MARK: - TaskTableViewCellDelegate
 extension MyDayViewController: TaskTableViewCellDelegate{
-    func taskTableViewCell(_ cell: TaskTableViewCell, didTapFinishButtonWithTask task: Task, didTapFinishButtonWithState state: Bool) {
-        for tmpTask in taskStore.unfinishedTask {
-            if tmpTask.id == task.id{
-                if let index = taskStore.unfinishedTask.firstIndex(of: task){
-                    taskStore.unfinishedTask.remove(at: index)
-                    taskStore.finishedTask.append(task)
-                }
-            }
+    func taskTableViewCell(_ cell: TaskTableViewCell, didTapFinishButtonWithTask task: Task) {
+        let state = task.isFinished
+        if state == false{
+            task.isFinished = true
         }
-        task.isFinished = state
+        else{
+            task.isFinished = false
+        }
         taskTable.reloadSections([0, 1], with: .automatic)
     }
     
-    func taskTableViewCell(_ cell: TaskTableViewCell, didTapImportantButtonWithTask task: Task, didTapImportantButtonWithState state: Bool) {
-        for tmpTask in taskStore.allTask {
-            if tmpTask == task{
-                taskStore.importantTask.append(task)
+    func taskTableViewCell(_ cell: TaskTableViewCell, didTapImportantButtonWithTask task: Task) {
+        let state = task.isImportant
+        if state == false{
+            for tmpTask in taskStore.allTask {
+                if tmpTask.id == task.id{
+                    task.isImportant = true
+                }
             }
         }
-        task.isImportant = state
+        else{
+            for tmpTask in taskStore.allTask {
+                if tmpTask.id == task.id{
+                    task.isImportant = false
+                }
+            }
+        }
+        taskTable.reloadSections([0,1], with: .automatic)
     }
 }
 

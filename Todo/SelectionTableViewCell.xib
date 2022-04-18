@@ -23,13 +23,13 @@
                                 <rect key="frame" x="0.0" y="0.0" width="45" height="44"/>
                             </imageView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalCompressionResistancePriority="751" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aIC-DC-rsV">
-                                <rect key="frame" x="45" y="0.0" width="225" height="44"/>
+                                <rect key="frame" x="45" y="0.0" width="230" height="44"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="B1X-db-7av">
-                                <rect key="frame" x="270" y="0.0" width="50" height="44"/>
+                                <rect key="frame" x="275" y="0.0" width="45" height="44"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -37,6 +37,7 @@
                         </subviews>
                         <constraints>
                             <constraint firstItem="zlT-ce-h1b" firstAttribute="width" secondItem="bff-0w-k4k" secondAttribute="width" multiplier="0.14" id="C48-Yr-ju6"/>
+                            <constraint firstItem="B1X-db-7av" firstAttribute="width" secondItem="bff-0w-k4k" secondAttribute="width" multiplier="0.14" id="vHd-pu-T6a"/>
                         </constraints>
                     </stackView>
                 </subviews>

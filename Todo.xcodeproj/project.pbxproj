@@ -10,6 +10,10 @@
 		0518D6BCC6DA644AAF548883 /* Pods_Todo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6CDF00C87A5182E90343627E /* Pods_Todo.framework */; };
 		8481D564398F5FE013863A45 /* Pods_Todo_TodoUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 558116E62B936FEF27EC358B /* Pods_Todo_TodoUITests.framework */; };
 		A90A97B3FA1308D344A1013D /* Pods_TodoTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0557C129FB9FDE1206FBF127 /* Pods_TodoTests.framework */; };
+		E4126F482809299000245BB7 /* ImportantViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4126F462809299000245BB7 /* ImportantViewController.swift */; };
+		E4126F492809299000245BB7 /* ImportantViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E4126F472809299000245BB7 /* ImportantViewController.xib */; };
+		E4126F4C28095B5800245BB7 /* PlannedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4126F4A28095B5800245BB7 /* PlannedViewController.swift */; };
+		E4126F4D28095B5800245BB7 /* PlannedViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E4126F4B28095B5800245BB7 /* PlannedViewController.xib */; };
 		E4B08DBA2806616F0069A7B5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4B08DB92806616F0069A7B5 /* AppDelegate.swift */; };
 		E4B08DBC2806616F0069A7B5 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4B08DBB2806616F0069A7B5 /* SceneDelegate.swift */; };
 		E4B08DBE2806616F0069A7B5 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4B08DBD2806616F0069A7B5 /* ViewController.swift */; };
@@ -59,6 +63,10 @@
 		5FEE4D124D01F6BD79E8D374 /* Pods-Todo-TodoUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Todo-TodoUITests.debug.xcconfig"; path = "Target Support Files/Pods-Todo-TodoUITests/Pods-Todo-TodoUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		6CDF00C87A5182E90343627E /* Pods_Todo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Todo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		AB7E308F74D5DBC9E979BFF8 /* Pods-TodoTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TodoTests.release.xcconfig"; path = "Target Support Files/Pods-TodoTests/Pods-TodoTests.release.xcconfig"; sourceTree = "<group>"; };
+		E4126F462809299000245BB7 /* ImportantViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportantViewController.swift; sourceTree = "<group>"; };
+		E4126F472809299000245BB7 /* ImportantViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ImportantViewController.xib; sourceTree = "<group>"; };
+		E4126F4A28095B5800245BB7 /* PlannedViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlannedViewController.swift; sourceTree = "<group>"; };
+		E4126F4B28095B5800245BB7 /* PlannedViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PlannedViewController.xib; sourceTree = "<group>"; };
 		E4B08DB62806616F0069A7B5 /* Todo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Todo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E4B08DB92806616F0069A7B5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E4B08DBB2806616F0069A7B5 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -152,10 +160,14 @@
 				E4B08DF32806625B0069A7B5 /* ListStore.swift */,
 				E4B08DF928066E5F0069A7B5 /* Task.swift */,
 				E4B08E03280684180069A7B5 /* TaskStore.swift */,
+				E4126F4A28095B5800245BB7 /* PlannedViewController.swift */,
+				E4126F4B28095B5800245BB7 /* PlannedViewController.xib */,
 				E4B08E052806886D0069A7B5 /* TasksViewController.swift */,
 				E4B08E062806886D0069A7B5 /* TasksViewController.xib */,
 				E4B08DE92806620D0069A7B5 /* MyDayViewController.swift */,
 				E4B08DEA2806620D0069A7B5 /* MyDayViewController.xib */,
+				E4126F462809299000245BB7 /* ImportantViewController.swift */,
+				E4126F472809299000245BB7 /* ImportantViewController.xib */,
 				E4B08DF528066A0F0069A7B5 /* ListViewController.swift */,
 				E4B08DF628066A0F0069A7B5 /* ListViewController.xib */,
 				E4B08DFF2806792B0069A7B5 /* TaskTableViewCell.swift */,
@@ -321,9 +333,11 @@
 				E4B08DC6280661700069A7B5 /* LaunchScreen.storyboard in Resources */,
 				E4B08DF02806623C0069A7B5 /* SelectionTableViewCell.xib in Resources */,
 				E4B08DF828066A0F0069A7B5 /* ListViewController.xib in Resources */,
+				E4126F492809299000245BB7 /* ImportantViewController.xib in Resources */,
 				E4B08DC3280661700069A7B5 /* Assets.xcassets in Resources */,
 				E4B08DC12806616F0069A7B5 /* Main.storyboard in Resources */,
 				E4B08E082806886D0069A7B5 /* TasksViewController.xib in Resources */,
+				E4126F4D28095B5800245BB7 /* PlannedViewController.xib in Resources */,
 				E4B08DEC2806620D0069A7B5 /* MyDayViewController.xib in Resources */,
 				E4B08E022806792B0069A7B5 /* TaskTableViewCell.xib in Resources */,
 			);
@@ -455,6 +469,7 @@
 			files = (
 				E4B08DBE2806616F0069A7B5 /* ViewController.swift in Sources */,
 				E4B08DBA2806616F0069A7B5 /* AppDelegate.swift in Sources */,
+				E4126F482809299000245BB7 /* ImportantViewController.swift in Sources */,
 				E4B08E012806792B0069A7B5 /* TaskTableViewCell.swift in Sources */,
 				E4B08DBC2806616F0069A7B5 /* SceneDelegate.swift in Sources */,
 				E4B08DEF2806623C0069A7B5 /* SelectionTableViewCell.swift in Sources */,
@@ -465,6 +480,7 @@
 				E4B08DF728066A0F0069A7B5 /* ListViewController.swift in Sources */,
 				E4B08DFA28066E5F0069A7B5 /* Task.swift in Sources */,
 				E4B08DF22806624B0069A7B5 /* List.swift in Sources */,
+				E4126F4C28095B5800245BB7 /* PlannedViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
