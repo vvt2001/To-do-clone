@@ -34,22 +34,58 @@ class SelectionTableViewCell: UITableViewCell {
         self.label.text = option
         switch index{
         case 0:
-            self.taskCount.text = "\(taskStore.myDayUnfinishedTask.count)"
+            self.icon.image = UIImage(systemName: "sun.max")
+            if taskStore.myDayUnfinishedTask.count != 0{
+                self.taskCount.text = "\(taskStore.myDayUnfinishedTask.count)"
+            }
+            else{
+                self.taskCount.text = ""
+            }
         case 1:
-            self.taskCount.text = "\(taskStore.importantTask.count)"
+            self.icon.image = UIImage(systemName: "star")
+            if taskStore.importantTask.count != 0{
+                self.taskCount.text = "\(taskStore.importantTask.count)"
+            }
+            else{
+                self.taskCount.text = ""
+            }
         case 2:
-            self.taskCount.text = "\(taskStore.plannedTask.count)"
+            self.icon.image = UIImage(systemName: "calendar")
+            if taskStore.todayTask.count != 0{
+                self.taskCount.text = "\(taskStore.todayTask.count)"
+            }
+            else{
+                self.taskCount.text = ""
+            }
         case 3:
-            self.taskCount.text = "\(taskStore.assignedToMeTask.count)"
+            self.icon.image = UIImage(systemName: "person")
+            if taskStore.assignedToMeTask.count != 0{
+                self.taskCount.text = "\(taskStore.assignedToMeTask.count)"
+            }
+            else{
+                self.taskCount.text = ""
+            }
         case 4:
-            self.taskCount.text = "\(taskStore.normalTask.count)"
+            self.icon.image = UIImage(systemName: "checkmark.icloud")
+            if taskStore.normalTask.count != 0{
+                self.taskCount.text = "\(taskStore.normalTask.count)"
+            }
+            else{
+                self.taskCount.text = ""
+            }
         default:
-            self.taskCount.text = ""
+            break
         }
-//        self.taskCount.text = taskCount
     }
+    
     func createListCell(name: String, index: Int){
         self.label.text = name
-        self.taskCount.text = "\(listStore.allList[index].unfinishedTask.count)"
+        if listStore.allList[index].unfinishedTask.count != 0{
+            self.taskCount.text = "\(listStore.allList[index].unfinishedTask.count)"
+        }
+        else{
+            self.taskCount.text = ""
+        }
+        self.icon.image = UIImage(systemName: "list.bullet")
     }
 }

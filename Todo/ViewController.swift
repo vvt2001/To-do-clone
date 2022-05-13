@@ -8,7 +8,7 @@
 import UIKit
 import RealmSwift
 
-class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate{
+class ViewController: UIViewController, UITextFieldDelegate{
     
     @IBOutlet var email: UILabel!
     @IBOutlet var selectionTable: UITableView!
@@ -17,18 +17,19 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     var listStore: ListStore!
     let taskStore = TaskStore()
-    var listArr = [List]()
+//    var listArr = [List]()
     
     @IBAction func addList(_ sender: UIButton){
         if let taskName = addListField.text, !taskName.isEmpty{
             let newList = listStore.createList(name: addListField.text)
             var indexPath = IndexPath()
             
-            if let index = listStore.allList.firstIndex(of: newList){
+            if let index = listStore.allList.lastIndex(of: newList){
                 indexPath = IndexPath(row: index, section: 1)
             }
             selectionTable.insertRows(at: [indexPath], with: .automatic)
-            listArr.append(newList)
+//            listArr.append(newList)
+            addListField.text = .none
         }
     }
     
@@ -40,6 +41,10 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
+        let realm = try! Realm()
+        print(Realm.Configuration.defaultConfiguration.fileURL)
+        
+        
         email.text = "thangvv@solarapp.asia"
         selectionTable.delegate = self
         selectionTable.dataSource = self
@@ -52,7 +57,9 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     override func viewWillAppear(_ animated: Bool) {
         selectionTable.reloadData()
     }
-    
+}
+
+extension ViewController: UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "SelectionTableViewCell", for: indexPath) as! SelectionTableViewCell
         cell.taskStore = taskStore
@@ -83,44 +90,57 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         if indexPath.section == 0 {
             switch indexPath.row{
             case 0:
-                print("myday")
                 let myDayViewController = MyDayViewController(nibName: "MyDayViewController", bundle: .main)
 //                let taskStore = TaskStore()
                 myDayViewController.taskStore = taskStore
+                myDayViewController.listStore = listStore
                 
                 navigationController?.pushViewController(myDayViewController, animated: true)
             case 1:
                 let importantViewController = ImportantViewController(nibName: "ImportantViewController", bundle: .main)
                 importantViewController.taskStore = taskStore
+                importantViewController.listStore = listStore
                 
                 navigationController?.pushViewController(importantViewController, animated: true)
             case 2:
                 let plannedViewController = PlannedViewController(nibName: "PlannedViewController", bundle: .main)
                 plannedViewController.taskStore = taskStore
+                plannedViewController.listStore = listStore
                 
                 navigationController?.pushViewController(plannedViewController, animated: true)
             case 4:
-                print("alltask")
                 let tasksViewController = TasksViewController(nibName: "TasksViewController", bundle: .main)
                 tasksViewController.taskStore = taskStore
+                tasksViewController.listStore = listStore
                 
                 navigationController?.pushViewController(tasksViewController, animated: true)
             default:
-                print("wrong")
+                break
             }
         }
         else{
             let listViewController = ListViewController(nibName: "ListViewController", bundle: .main)
-            listViewController.list = listArr[indexPath.row]
+            listViewController.listStore = listStore
+            listViewController.list = listStore.allList[indexPath.row]
             listViewController.taskStore = taskStore
             navigationController?.pushViewController(listViewController, animated: true)
-            
-            
         }
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return section == 0 ? "" : "Lists"
+        if section == 0{
+            return ""
+        }
+        else{
+            return "Lists"
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete{
+            let list = listStore.allList[indexPath.row]
+            listStore.deleteList(list)
+            tableView.deleteRows(at: [indexPath], with: .automatic)
+        }
     }
 }
-

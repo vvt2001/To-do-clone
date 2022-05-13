@@ -14,18 +14,14 @@ class ListStore{
     }
     @discardableResult func createList(name: String!) -> List{
         let newList: List
-        if let listName = name{
-            newList = List(name: listName)
-        }
-        else{
-            if allList.count == 0{
-                newList = List(name: "Untitled list")
-            }
-            else{
-                newList = List(name: "Untitled list \(allList.count)")
-            }
-        }
+        newList = List(name: name)
         allList.append(newList)
         return newList
+    }
+    
+    func deleteList(_ list: List){
+        if let index = allList.firstIndex(of: list){
+            allList.remove(at: index)
+        }
     }
 }

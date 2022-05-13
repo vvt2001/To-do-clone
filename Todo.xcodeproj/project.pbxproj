@@ -14,6 +14,27 @@
 		E4126F492809299000245BB7 /* ImportantViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E4126F472809299000245BB7 /* ImportantViewController.xib */; };
 		E4126F4C28095B5800245BB7 /* PlannedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4126F4A28095B5800245BB7 /* PlannedViewController.swift */; };
 		E4126F4D28095B5800245BB7 /* PlannedViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E4126F4B28095B5800245BB7 /* PlannedViewController.xib */; };
+		E442CA1928226FED0030F12C /* ListSelectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E442CA1728226FED0030F12C /* ListSelectorViewController.swift */; };
+		E442CA1A28226FED0030F12C /* ListSelectorViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E442CA1828226FED0030F12C /* ListSelectorViewController.xib */; };
+		E442CA1D2822705B0030F12C /* ListSelectorTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E442CA1B2822705B0030F12C /* ListSelectorTableViewCell.swift */; };
+		E442CA1E2822705B0030F12C /* ListSelectorTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E442CA1C2822705B0030F12C /* ListSelectorTableViewCell.xib */; };
+		E442CA21282286980030F12C /* ListOptionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E442CA1F282286980030F12C /* ListOptionsViewController.swift */; };
+		E442CA22282286980030F12C /* ListOptionsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E442CA20282286980030F12C /* ListOptionsViewController.xib */; };
+		E442CA25282288D60030F12C /* ListOptionsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E442CA23282288D60030F12C /* ListOptionsTableViewCell.swift */; };
+		E442CA26282288D60030F12C /* ListOptionsTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E442CA24282288D60030F12C /* ListOptionsTableViewCell.xib */; };
+		E464D5202818CD66006815A2 /* DatePickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E464D51E2818CD65006815A2 /* DatePickerViewController.swift */; };
+		E464D5212818CD66006815A2 /* DatePickerViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E464D51F2818CD66006815A2 /* DatePickerViewController.xib */; };
+		E464D523281949A4006815A2 /* Step.swift in Sources */ = {isa = PBXBuildFile; fileRef = E464D522281949A4006815A2 /* Step.swift */; };
+		E47CCDCE28129CA5002EB9F0 /* TaskModificationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E47CCDCC28129CA4002EB9F0 /* TaskModificationViewController.swift */; };
+		E47CCDCF28129CA5002EB9F0 /* TaskModificationViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E47CCDCD28129CA5002EB9F0 /* TaskModificationViewController.xib */; };
+		E47CCDD228129FF6002EB9F0 /* TaskStepTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E47CCDD028129FF6002EB9F0 /* TaskStepTableViewCell.swift */; };
+		E47CCDD328129FF6002EB9F0 /* TaskStepTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E47CCDD128129FF6002EB9F0 /* TaskStepTableViewCell.xib */; };
+		E47CCDD62812A1B0002EB9F0 /* ModifyOptionTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E47CCDD42812A1B0002EB9F0 /* ModifyOptionTableViewCell.swift */; };
+		E47CCDD72812A1B0002EB9F0 /* ModifyOptionTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E47CCDD52812A1B0002EB9F0 /* ModifyOptionTableViewCell.xib */; };
+		E4AC138728123DCA00F5AFFD /* DueViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4AC138528123DCA00F5AFFD /* DueViewController.swift */; };
+		E4AC138828123DCA00F5AFFD /* DueViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E4AC138628123DCA00F5AFFD /* DueViewController.xib */; };
+		E4AC138B2812405500F5AFFD /* DueTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4AC13892812405500F5AFFD /* DueTableViewCell.swift */; };
+		E4AC138C2812405500F5AFFD /* DueTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E4AC138A2812405500F5AFFD /* DueTableViewCell.xib */; };
 		E4B08DBA2806616F0069A7B5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4B08DB92806616F0069A7B5 /* AppDelegate.swift */; };
 		E4B08DBC2806616F0069A7B5 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4B08DBB2806616F0069A7B5 /* SceneDelegate.swift */; };
 		E4B08DBE2806616F0069A7B5 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4B08DBD2806616F0069A7B5 /* ViewController.swift */; };
@@ -37,6 +58,18 @@
 		E4B08E04280684180069A7B5 /* TaskStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4B08E03280684180069A7B5 /* TaskStore.swift */; };
 		E4B08E072806886D0069A7B5 /* TasksViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4B08E052806886D0069A7B5 /* TasksViewController.swift */; };
 		E4B08E082806886D0069A7B5 /* TasksViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E4B08E062806886D0069A7B5 /* TasksViewController.xib */; };
+		E4F60712282B454A001019D4 /* SortOptionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4F60710282B454A001019D4 /* SortOptionsViewController.swift */; };
+		E4F60713282B454A001019D4 /* SortOptionsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E4F60711282B454A001019D4 /* SortOptionsViewController.xib */; };
+		E4F60717282B4841001019D4 /* SortOptionsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4F60715282B4841001019D4 /* SortOptionsTableViewCell.swift */; };
+		E4F60718282B4841001019D4 /* SortOptionsTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E4F60716282B4841001019D4 /* SortOptionsTableViewCell.xib */; };
+		E4F6071B282B55E9001019D4 /* ThemeSelectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4F60719282B55E9001019D4 /* ThemeSelectorViewController.swift */; };
+		E4F6071C282B55E9001019D4 /* ThemeSelectorViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E4F6071A282B55E9001019D4 /* ThemeSelectorViewController.xib */; };
+		E4FF65E0280F9966003E91E9 /* Enumeration.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4FF65DF280F9966003E91E9 /* Enumeration.swift */; };
+		E4FF65E3280FAC82003E91E9 /* PlannedFilterOptionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4FF65E1280FAC82003E91E9 /* PlannedFilterOptionsViewController.swift */; };
+		E4FF65E4280FAC82003E91E9 /* PlannedFilterOptionsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E4FF65E2280FAC82003E91E9 /* PlannedFilterOptionsViewController.xib */; };
+		E4FF65E7280FAE8A003E91E9 /* FilterOptionsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4FF65E5280FAE8A003E91E9 /* FilterOptionsTableViewCell.swift */; };
+		E4FF65E8280FAE8A003E91E9 /* FilterOptionsTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E4FF65E6280FAE8A003E91E9 /* FilterOptionsTableViewCell.xib */; };
+		E4FF65EA281010EE003E91E9 /* Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4FF65E9281010EE003E91E9 /* Extension.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -67,6 +100,27 @@
 		E4126F472809299000245BB7 /* ImportantViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ImportantViewController.xib; sourceTree = "<group>"; };
 		E4126F4A28095B5800245BB7 /* PlannedViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlannedViewController.swift; sourceTree = "<group>"; };
 		E4126F4B28095B5800245BB7 /* PlannedViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PlannedViewController.xib; sourceTree = "<group>"; };
+		E442CA1728226FED0030F12C /* ListSelectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListSelectorViewController.swift; sourceTree = "<group>"; };
+		E442CA1828226FED0030F12C /* ListSelectorViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ListSelectorViewController.xib; sourceTree = "<group>"; };
+		E442CA1B2822705B0030F12C /* ListSelectorTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListSelectorTableViewCell.swift; sourceTree = "<group>"; };
+		E442CA1C2822705B0030F12C /* ListSelectorTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ListSelectorTableViewCell.xib; sourceTree = "<group>"; };
+		E442CA1F282286980030F12C /* ListOptionsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListOptionsViewController.swift; sourceTree = "<group>"; };
+		E442CA20282286980030F12C /* ListOptionsViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ListOptionsViewController.xib; sourceTree = "<group>"; };
+		E442CA23282288D60030F12C /* ListOptionsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListOptionsTableViewCell.swift; sourceTree = "<group>"; };
+		E442CA24282288D60030F12C /* ListOptionsTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ListOptionsTableViewCell.xib; sourceTree = "<group>"; };
+		E464D51E2818CD65006815A2 /* DatePickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatePickerViewController.swift; sourceTree = "<group>"; };
+		E464D51F2818CD66006815A2 /* DatePickerViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DatePickerViewController.xib; sourceTree = "<group>"; };
+		E464D522281949A4006815A2 /* Step.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Step.swift; sourceTree = "<group>"; };
+		E47CCDCC28129CA4002EB9F0 /* TaskModificationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskModificationViewController.swift; sourceTree = "<group>"; };
+		E47CCDCD28129CA5002EB9F0 /* TaskModificationViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TaskModificationViewController.xib; sourceTree = "<group>"; };
+		E47CCDD028129FF6002EB9F0 /* TaskStepTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskStepTableViewCell.swift; sourceTree = "<group>"; };
+		E47CCDD128129FF6002EB9F0 /* TaskStepTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TaskStepTableViewCell.xib; sourceTree = "<group>"; };
+		E47CCDD42812A1B0002EB9F0 /* ModifyOptionTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModifyOptionTableViewCell.swift; sourceTree = "<group>"; };
+		E47CCDD52812A1B0002EB9F0 /* ModifyOptionTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ModifyOptionTableViewCell.xib; sourceTree = "<group>"; };
+		E4AC138528123DCA00F5AFFD /* DueViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DueViewController.swift; sourceTree = "<group>"; };
+		E4AC138628123DCA00F5AFFD /* DueViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DueViewController.xib; sourceTree = "<group>"; };
+		E4AC13892812405500F5AFFD /* DueTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DueTableViewCell.swift; sourceTree = "<group>"; };
+		E4AC138A2812405500F5AFFD /* DueTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DueTableViewCell.xib; sourceTree = "<group>"; };
 		E4B08DB62806616F0069A7B5 /* Todo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Todo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E4B08DB92806616F0069A7B5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E4B08DBB2806616F0069A7B5 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -94,6 +148,18 @@
 		E4B08E03280684180069A7B5 /* TaskStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskStore.swift; sourceTree = "<group>"; };
 		E4B08E052806886D0069A7B5 /* TasksViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TasksViewController.swift; sourceTree = "<group>"; };
 		E4B08E062806886D0069A7B5 /* TasksViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TasksViewController.xib; sourceTree = "<group>"; };
+		E4F60710282B454A001019D4 /* SortOptionsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SortOptionsViewController.swift; sourceTree = "<group>"; };
+		E4F60711282B454A001019D4 /* SortOptionsViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SortOptionsViewController.xib; sourceTree = "<group>"; };
+		E4F60715282B4841001019D4 /* SortOptionsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SortOptionsTableViewCell.swift; sourceTree = "<group>"; };
+		E4F60716282B4841001019D4 /* SortOptionsTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SortOptionsTableViewCell.xib; sourceTree = "<group>"; };
+		E4F60719282B55E9001019D4 /* ThemeSelectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeSelectorViewController.swift; sourceTree = "<group>"; };
+		E4F6071A282B55E9001019D4 /* ThemeSelectorViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ThemeSelectorViewController.xib; sourceTree = "<group>"; };
+		E4FF65DF280F9966003E91E9 /* Enumeration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Enumeration.swift; sourceTree = "<group>"; };
+		E4FF65E1280FAC82003E91E9 /* PlannedFilterOptionsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlannedFilterOptionsViewController.swift; sourceTree = "<group>"; };
+		E4FF65E2280FAC82003E91E9 /* PlannedFilterOptionsViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PlannedFilterOptionsViewController.xib; sourceTree = "<group>"; };
+		E4FF65E5280FAE8A003E91E9 /* FilterOptionsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterOptionsTableViewCell.swift; sourceTree = "<group>"; };
+		E4FF65E6280FAE8A003E91E9 /* FilterOptionsTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FilterOptionsTableViewCell.xib; sourceTree = "<group>"; };
+		E4FF65E9281010EE003E91E9 /* Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extension.swift; sourceTree = "<group>"; };
 		E7879F8655F119597983D28E /* Pods-Todo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Todo.release.xcconfig"; path = "Target Support Files/Pods-Todo/Pods-Todo.release.xcconfig"; sourceTree = "<group>"; };
 		E81E2E2DA77674CC34891EFB /* Pods-Todo-TodoUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Todo-TodoUITests.release.xcconfig"; path = "Target Support Files/Pods-Todo-TodoUITests/Pods-Todo-TodoUITests.release.xcconfig"; sourceTree = "<group>"; };
 		F20D5D8C42F27842B5E58AFB /* Pods-Todo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Todo.debug.xcconfig"; path = "Target Support Files/Pods-Todo/Pods-Todo.debug.xcconfig"; sourceTree = "<group>"; };
@@ -160,20 +226,53 @@
 				E4B08DF32806625B0069A7B5 /* ListStore.swift */,
 				E4B08DF928066E5F0069A7B5 /* Task.swift */,
 				E4B08E03280684180069A7B5 /* TaskStore.swift */,
-				E4126F4A28095B5800245BB7 /* PlannedViewController.swift */,
-				E4126F4B28095B5800245BB7 /* PlannedViewController.xib */,
+				E464D522281949A4006815A2 /* Step.swift */,
+				E4FF65DF280F9966003E91E9 /* Enumeration.swift */,
+				E4FF65E9281010EE003E91E9 /* Extension.swift */,
 				E4B08E052806886D0069A7B5 /* TasksViewController.swift */,
 				E4B08E062806886D0069A7B5 /* TasksViewController.xib */,
 				E4B08DE92806620D0069A7B5 /* MyDayViewController.swift */,
 				E4B08DEA2806620D0069A7B5 /* MyDayViewController.xib */,
 				E4126F462809299000245BB7 /* ImportantViewController.swift */,
 				E4126F472809299000245BB7 /* ImportantViewController.xib */,
+				E4126F4A28095B5800245BB7 /* PlannedViewController.swift */,
+				E4126F4B28095B5800245BB7 /* PlannedViewController.xib */,
+				E4FF65E1280FAC82003E91E9 /* PlannedFilterOptionsViewController.swift */,
+				E4FF65E2280FAC82003E91E9 /* PlannedFilterOptionsViewController.xib */,
+				E4FF65E5280FAE8A003E91E9 /* FilterOptionsTableViewCell.swift */,
+				E4FF65E6280FAE8A003E91E9 /* FilterOptionsTableViewCell.xib */,
 				E4B08DF528066A0F0069A7B5 /* ListViewController.swift */,
 				E4B08DF628066A0F0069A7B5 /* ListViewController.xib */,
+				E4AC138528123DCA00F5AFFD /* DueViewController.swift */,
+				E4AC138628123DCA00F5AFFD /* DueViewController.xib */,
+				E4AC13892812405500F5AFFD /* DueTableViewCell.swift */,
+				E4AC138A2812405500F5AFFD /* DueTableViewCell.xib */,
+				E464D51E2818CD65006815A2 /* DatePickerViewController.swift */,
+				E464D51F2818CD66006815A2 /* DatePickerViewController.xib */,
+				E442CA1728226FED0030F12C /* ListSelectorViewController.swift */,
+				E442CA1828226FED0030F12C /* ListSelectorViewController.xib */,
+				E442CA1B2822705B0030F12C /* ListSelectorTableViewCell.swift */,
+				E442CA1C2822705B0030F12C /* ListSelectorTableViewCell.xib */,
+				E442CA1F282286980030F12C /* ListOptionsViewController.swift */,
+				E442CA20282286980030F12C /* ListOptionsViewController.xib */,
+				E442CA23282288D60030F12C /* ListOptionsTableViewCell.swift */,
+				E442CA24282288D60030F12C /* ListOptionsTableViewCell.xib */,
+				E4F60710282B454A001019D4 /* SortOptionsViewController.swift */,
+				E4F60711282B454A001019D4 /* SortOptionsViewController.xib */,
+				E4F60715282B4841001019D4 /* SortOptionsTableViewCell.swift */,
+				E4F60716282B4841001019D4 /* SortOptionsTableViewCell.xib */,
+				E4F60719282B55E9001019D4 /* ThemeSelectorViewController.swift */,
+				E4F6071A282B55E9001019D4 /* ThemeSelectorViewController.xib */,
 				E4B08DFF2806792B0069A7B5 /* TaskTableViewCell.swift */,
 				E4B08E002806792B0069A7B5 /* TaskTableViewCell.xib */,
 				E4B08DED2806623C0069A7B5 /* SelectionTableViewCell.swift */,
 				E4B08DEE2806623C0069A7B5 /* SelectionTableViewCell.xib */,
+				E47CCDCC28129CA4002EB9F0 /* TaskModificationViewController.swift */,
+				E47CCDCD28129CA5002EB9F0 /* TaskModificationViewController.xib */,
+				E47CCDD028129FF6002EB9F0 /* TaskStepTableViewCell.swift */,
+				E47CCDD128129FF6002EB9F0 /* TaskStepTableViewCell.xib */,
+				E47CCDD42812A1B0002EB9F0 /* ModifyOptionTableViewCell.swift */,
+				E47CCDD52812A1B0002EB9F0 /* ModifyOptionTableViewCell.xib */,
 				E4B08DC2280661700069A7B5 /* Assets.xcassets */,
 				E4B08DC4280661700069A7B5 /* LaunchScreen.storyboard */,
 				E4B08DC7280661700069A7B5 /* Info.plist */,
@@ -330,13 +429,28 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E442CA26282288D60030F12C /* ListOptionsTableViewCell.xib in Resources */,
 				E4B08DC6280661700069A7B5 /* LaunchScreen.storyboard in Resources */,
 				E4B08DF02806623C0069A7B5 /* SelectionTableViewCell.xib in Resources */,
+				E442CA1E2822705B0030F12C /* ListSelectorTableViewCell.xib in Resources */,
+				E4F60718282B4841001019D4 /* SortOptionsTableViewCell.xib in Resources */,
+				E4AC138828123DCA00F5AFFD /* DueViewController.xib in Resources */,
+				E47CCDCF28129CA5002EB9F0 /* TaskModificationViewController.xib in Resources */,
 				E4B08DF828066A0F0069A7B5 /* ListViewController.xib in Resources */,
+				E442CA1A28226FED0030F12C /* ListSelectorViewController.xib in Resources */,
+				E4AC138C2812405500F5AFFD /* DueTableViewCell.xib in Resources */,
+				E464D5212818CD66006815A2 /* DatePickerViewController.xib in Resources */,
+				E442CA22282286980030F12C /* ListOptionsViewController.xib in Resources */,
 				E4126F492809299000245BB7 /* ImportantViewController.xib in Resources */,
 				E4B08DC3280661700069A7B5 /* Assets.xcassets in Resources */,
+				E4F60713282B454A001019D4 /* SortOptionsViewController.xib in Resources */,
 				E4B08DC12806616F0069A7B5 /* Main.storyboard in Resources */,
 				E4B08E082806886D0069A7B5 /* TasksViewController.xib in Resources */,
+				E4FF65E4280FAC82003E91E9 /* PlannedFilterOptionsViewController.xib in Resources */,
+				E4FF65E8280FAE8A003E91E9 /* FilterOptionsTableViewCell.xib in Resources */,
+				E4F6071C282B55E9001019D4 /* ThemeSelectorViewController.xib in Resources */,
+				E47CCDD328129FF6002EB9F0 /* TaskStepTableViewCell.xib in Resources */,
+				E47CCDD72812A1B0002EB9F0 /* ModifyOptionTableViewCell.xib in Resources */,
 				E4126F4D28095B5800245BB7 /* PlannedViewController.xib in Resources */,
 				E4B08DEC2806620D0069A7B5 /* MyDayViewController.xib in Resources */,
 				E4B08E022806792B0069A7B5 /* TaskTableViewCell.xib in Resources */,
@@ -470,17 +584,35 @@
 				E4B08DBE2806616F0069A7B5 /* ViewController.swift in Sources */,
 				E4B08DBA2806616F0069A7B5 /* AppDelegate.swift in Sources */,
 				E4126F482809299000245BB7 /* ImportantViewController.swift in Sources */,
+				E47CCDD62812A1B0002EB9F0 /* ModifyOptionTableViewCell.swift in Sources */,
+				E442CA1D2822705B0030F12C /* ListSelectorTableViewCell.swift in Sources */,
+				E4F60717282B4841001019D4 /* SortOptionsTableViewCell.swift in Sources */,
 				E4B08E012806792B0069A7B5 /* TaskTableViewCell.swift in Sources */,
 				E4B08DBC2806616F0069A7B5 /* SceneDelegate.swift in Sources */,
+				E4F60712282B454A001019D4 /* SortOptionsViewController.swift in Sources */,
 				E4B08DEF2806623C0069A7B5 /* SelectionTableViewCell.swift in Sources */,
+				E464D523281949A4006815A2 /* Step.swift in Sources */,
+				E4FF65E3280FAC82003E91E9 /* PlannedFilterOptionsViewController.swift in Sources */,
 				E4B08E072806886D0069A7B5 /* TasksViewController.swift in Sources */,
+				E4F6071B282B55E9001019D4 /* ThemeSelectorViewController.swift in Sources */,
 				E4B08DF42806625B0069A7B5 /* ListStore.swift in Sources */,
+				E4FF65EA281010EE003E91E9 /* Extension.swift in Sources */,
 				E4B08E04280684180069A7B5 /* TaskStore.swift in Sources */,
 				E4B08DEB2806620D0069A7B5 /* MyDayViewController.swift in Sources */,
 				E4B08DF728066A0F0069A7B5 /* ListViewController.swift in Sources */,
+				E47CCDCE28129CA5002EB9F0 /* TaskModificationViewController.swift in Sources */,
+				E442CA21282286980030F12C /* ListOptionsViewController.swift in Sources */,
+				E4FF65E0280F9966003E91E9 /* Enumeration.swift in Sources */,
 				E4B08DFA28066E5F0069A7B5 /* Task.swift in Sources */,
+				E442CA1928226FED0030F12C /* ListSelectorViewController.swift in Sources */,
 				E4B08DF22806624B0069A7B5 /* List.swift in Sources */,
 				E4126F4C28095B5800245BB7 /* PlannedViewController.swift in Sources */,
+				E47CCDD228129FF6002EB9F0 /* TaskStepTableViewCell.swift in Sources */,
+				E464D5202818CD66006815A2 /* DatePickerViewController.swift in Sources */,
+				E442CA25282288D60030F12C /* ListOptionsTableViewCell.swift in Sources */,
+				E4FF65E7280FAE8A003E91E9 /* FilterOptionsTableViewCell.swift in Sources */,
+				E4AC138B2812405500F5AFFD /* DueTableViewCell.swift in Sources */,
+				E4AC138728123DCA00F5AFFD /* DueViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -666,6 +798,7 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -695,6 +828,7 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
