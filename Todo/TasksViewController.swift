@@ -7,11 +7,12 @@
 
 import UIKit
 
-class TasksViewController: UIViewController, UITextFieldDelegate {
+class TasksViewController: UIViewController, UITextFieldDelegate, UIViewControllerTransitioningDelegate {
     
     var taskStore: TaskStore!
     var listStore: ListStore!
-    
+    var account: Account!
+
     @IBOutlet weak var taskTable: UITableView!
     @IBOutlet weak var addTaskField: UITextField!
     @IBOutlet weak var addButton: UIButton!
@@ -26,6 +27,7 @@ class TasksViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var setDueButton: UIButton!
     @IBOutlet weak var deleteButton: UIButton!
     @IBOutlet var myButtons: [UIButton]!
+    @IBOutlet weak var toolBarStackView: UIStackView!
     
     var myDayIsOn = false
     var reminderIsOn = false
@@ -48,6 +50,9 @@ class TasksViewController: UIViewController, UITextFieldDelegate {
             }
             listOptionBarButtonItem.tintColor = UIColor.link
             self.navigationController?.navigationBar.tintColor = UIColor.link
+            addTaskField.attributedPlaceholder = NSAttributedString(string: "Add a Task", attributes: [NSAttributedString.Key.foregroundColor: UIColor.gray])
+            addTaskField.textColor = UIColor.black
+            self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor : UIColor.black]
         }
         else{
             for button in self.myButtons {
@@ -56,39 +61,76 @@ class TasksViewController: UIViewController, UITextFieldDelegate {
             }
             listOptionBarButtonItem.tintColor = UIColor.white
             self.navigationController?.navigationBar.tintColor = UIColor.white
+            addTaskField.attributedPlaceholder = NSAttributedString(string: "Add a Task", attributes: [NSAttributedString.Key.foregroundColor: UIColor.white])
+            addTaskField.textColor = UIColor.white
+            self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor : UIColor.white]
         }
+    }
+    
+    private func requestNotification(task: Task){
+        let center = UNUserNotificationCenter.current()
+        
+        let content = UNMutableNotificationContent()
+        content.title = NSString.localizedUserNotificationString(forKey: "Task Management", arguments: nil)
+        content.body = NSString.localizedUserNotificationString(forKey: "'\(task.getName())' is about to meets due. Make sure to finish it.", arguments: nil)
+        content.sound = UNNotificationSound.default
+        content.badge = 1
+        
+        var remindDate = Date()
+        if let dueDate = self.dueDate {
+            remindDate = Calendar.current.date(bySettingHour: 21, minute: 0, second: 0, of: dueDate)!
+        }
+        else{
+            remindDate = Calendar.current.date(bySettingHour: 21, minute: 0, second: 0, of: Date())!
+        }
+        var calendar = Calendar.current
+        calendar.timeZone = TimeZone.current
+        var remindDateComponent = DateComponents()
+        remindDateComponent.day = calendar.component(.day, from: remindDate)
+        remindDateComponent.month = calendar.component(.month, from: remindDate)
+        remindDateComponent.year = calendar.component(.year, from: remindDate)
+        remindDateComponent.hour = calendar.component(.hour, from: remindDate)
+        remindDateComponent.minute = calendar.component(.minute, from: remindDate)
+
+        let trigger = UNCalendarNotificationTrigger(dateMatching: remindDateComponent, repeats: false)
+//        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false)
+
+        let identifier = UUID().uuidString
+        task.setRemindId(remindId: identifier)
+        let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
+        center.add(request)
     }
     
     @IBAction func addTask(_ sender: UIButton){
         if let taskName = addTaskField.text, !taskName.isEmpty{
             let newTask = Task(name: taskName, type: .tasks, isMyDay: false)
-            
+            newTask.setAccountId(accountID: account.getID())
             if myDayIsOn == true{
-                newTask.isMyDay = true
+                newTask.setIsMyDay(isMyDay: true)
             }
             if reminderIsOn == true{
-                
+                requestNotification(task: newTask)
             }
             if dueIsOn == true{
                 switch dueType{
                 case .today:
-                    newTask.dueDate = dueDate
+                    newTask.setDueDate(dueDate: dueDate!)
                     
                 case .tomorrow:
-                    newTask.dueDate = dueDate
+                    newTask.setDueDate(dueDate: dueDate!)
                     
                 case .nextWeek:
-                    newTask.dueDate = dueDate
+                    newTask.setDueDate(dueDate: dueDate!)
                     
                 case .optional:
-                    newTask.dueDate = dueDate
+                    newTask.setDueDate(dueDate: dueDate!)
                 default:
                     break
                 }
             }
-            _ = taskStore.createTask(name: newTask.name, type: newTask.type, date: newTask.dueDate, isMyDay: newTask.isMyDay)
+            taskStore.addTask(task: newTask)
             var indexPath = IndexPath()
-            if let index = taskStore.unfinishedTask.lastIndex(of: newTask){
+            if let index = taskStore.unfinishedTask.lastIndex(where: {$0.getId() == newTask.getId()}){
                 indexPath = IndexPath(row: index, section: 0)
             }
             taskTable.insertRows(at: [indexPath], with: .automatic)
@@ -113,7 +155,12 @@ class TasksViewController: UIViewController, UITextFieldDelegate {
         if reminderIsOn == false{
             reminderIsOn = true
             reminderToggleButton.setImage(UIImage(systemName: "bell.fill"), for: .normal)
-            reminderToggleButton.setTitle("Remind me at ", for: .normal)
+            if dueIsOn{
+                reminderToggleButton.setTitle("Remind me before due", for: .normal)
+            }
+            else{
+                reminderToggleButton.setTitle("Remind me today", for: .normal)
+            }
         }
         else{
             reminderIsOn = false
@@ -125,15 +172,16 @@ class TasksViewController: UIViewController, UITextFieldDelegate {
     @IBAction func toggleDue(_ sender: UIButton){
         
         if dueIsOn == false{
-            let dueViewController = DueViewController()
-            dueViewController.delegate = self
-            present(dueViewController, animated: true, completion: nil)
+            presentDueViewController()
         }
         else{
             dueIsOn = false
             dueType = .none
             dueToggleButton.setImage(UIImage(systemName: "calendar.circle"), for: .normal)
             dueToggleButton.setTitle("", for: .normal)
+            if reminderIsOn{
+                reminderToggleButton.setTitle("Remind me today", for: .normal)
+            }
         }
     }
     
@@ -146,12 +194,12 @@ class TasksViewController: UIViewController, UITextFieldDelegate {
             isSelectedAll = true
             if taskStore.unfinishedTask.count > 0{
                 for i in 0...(taskStore.unfinishedTask.count - 1){
-                    taskStore.unfinishedTask[i].isSelected = true
+                    taskStore.unfinishedTask[i].setIsSelected(isSelected: true)
                 }
             }
             if taskStore.finishedTask.count > 0{
                 for i in 0...(taskStore.finishedTask.count - 1){
-                    taskStore.finishedTask[i].isSelected = true
+                    taskStore.finishedTask[i].setIsSelected(isSelected: true)
                 }
             }
             selectAllButton.setTitle("Clear all", for: .normal)
@@ -161,12 +209,12 @@ class TasksViewController: UIViewController, UITextFieldDelegate {
             isSelectedAll = false
             if taskStore.unfinishedTask.count > 0{
                 for i in 0...(taskStore.unfinishedTask.count - 1){
-                    taskStore.unfinishedTask[i].isSelected = false
+                    taskStore.unfinishedTask[i].setIsSelected(isSelected: false)
                 }
             }
             if taskStore.finishedTask.count > 0{
                 for i in 0...(taskStore.finishedTask.count - 1){
-                    taskStore.finishedTask[i].isSelected = false
+                    taskStore.finishedTask[i].setIsSelected(isSelected: false)
                 }
             }
             selectAllButton.setTitle("Select all", for: .normal)
@@ -178,27 +226,21 @@ class TasksViewController: UIViewController, UITextFieldDelegate {
     
     @IBAction func moveTask(_ sender: UIButton){
         if isSelected{
-            let listSelectorViewController = ListSelectorViewController()
-            listSelectorViewController.delegate = self
-            listSelectorViewController.isEditMode = isEditMode
-            listSelectorViewController.listStore = listStore
-            present(listSelectorViewController, animated: true, completion: nil)
+            presentListSelectorViewController()
         }
     }
     
     @IBAction func setDueDate(_ sender: UIButton){
         if isSelected{
-            let dueViewController = DueViewController()
-            dueViewController.delegate = self
-            present(dueViewController, animated: true, completion: nil)
+            presentDueViewController()
         }
     }
     
     @IBAction func deleteSelected(_ sender: UIButton){
         if isSelected{
             for tmpTask in taskStore.allTask{
-                let index = taskStore.allTask.firstIndex(where: {$0.id == tmpTask.id})
-                if tmpTask.isSelected{
+                let index = taskStore.allTask.firstIndex(where: {$0.getId() == tmpTask.getId()})
+                if tmpTask.getIsSelected(){
                     taskStore.allTask.remove(at: index!)
                 }
             }
@@ -208,10 +250,7 @@ class TasksViewController: UIViewController, UITextFieldDelegate {
     
     @objc func listOptions(_ sender: UIBarButtonItem){
         if isEditMode == false{
-            let listOptionsViewController = ListOptionsViewController()
-            listOptionsViewController.isDuplicatable = true
-            listOptionsViewController.delegate = self
-            present(listOptionsViewController, animated: true, completion: nil)
+            presentListOptionsViewController()
         }
         else{
             self.addTaskOptions.isHidden = false
@@ -222,11 +261,45 @@ class TasksViewController: UIViewController, UITextFieldDelegate {
             listOptionBarButtonItem.image = UIImage(systemName: "ellipsis")
             taskTable.reloadSections([0, 1], with: .automatic)
         }
+
+    }
+    
+    private func changeTheme(type: themeType){
+        if type == .white{
+            isThemeWhite = true
+        }
+        else{
+            isThemeWhite = false
+        }
+        switch type {
+        case .white:
+            view.backgroundColor = UIColor.white
+            taskTable.backgroundColor = UIColor.white
+        case .red:
+            view.backgroundColor = UIColor.systemRed
+            taskTable.backgroundColor = UIColor.systemRed
+        case .blue:
+            view.backgroundColor = UIColor.systemBlue
+            taskTable.backgroundColor = UIColor.systemBlue
+        case .green:
+            view.backgroundColor = UIColor.systemGreen
+            taskTable.backgroundColor = UIColor.systemGreen
+        case .yellow:
+            view.backgroundColor = UIColor.systemYellow
+            taskTable.backgroundColor = UIColor.systemYellow
+        case .purple:
+            view.backgroundColor = UIColor.systemPurple
+            taskTable.backgroundColor = UIColor.systemPurple
+        case .teal:
+            view.backgroundColor = UIColor.systemTeal
+            taskTable.backgroundColor = UIColor.systemTeal
+        }
+        changeButtonColor()
+        taskTable.reloadData()
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
         listOptionBarButtonItem = UIBarButtonItem(title: "", style: .done, target: self, action: #selector(listOptions))
         listOptionBarButtonItem.image = UIImage(systemName: "ellipsis")
         
@@ -238,10 +311,20 @@ class TasksViewController: UIViewController, UITextFieldDelegate {
         
         taskTable.rowHeight = 60
         
+        self.title = "Tasks"
+        let tapGesture = UITapGestureRecognizer(target: view, action: #selector(UIView.endEditing))
+        view.addGestureRecognizer(tapGesture)
+        tapGesture.cancelsTouchesInView = false
+        
+        changeTheme(type: account.getCurrentThemeType())
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(TasksViewController.keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(TasksViewController.keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
+    
     override func viewWillAppear(_ animated: Bool) {
-        changeButtonColor()
+        changeTheme(type: account.getCurrentThemeType())
         self.taskTable.reloadSections([0,1], with: .automatic)
     }
     
@@ -249,6 +332,13 @@ class TasksViewController: UIViewController, UITextFieldDelegate {
         self.view.endEditing(true)
         return false
     }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor : UIColor.black]
+        self.navigationController?.navigationBar.tintColor = UIColor.link
+    }
+    
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         
@@ -256,6 +346,65 @@ class TasksViewController: UIViewController, UITextFieldDelegate {
         reminderIsOn = false
         dueIsOn = false
         dueType = .none
+    }
+    
+    func presentDueViewController(){
+        let dueViewController = DueViewController()
+        dueViewController.transitioningDelegate = self
+        dueViewController.modalTransitionStyle = .coverVertical
+        dueViewController.modalPresentationStyle = .custom
+        dueViewController.delegate = self
+        self.view.layer.opacity = 0.5
+        self.present(dueViewController, animated: true, completion: nil)
+    }
+    
+    func presentListOptionsViewController(){
+        let listOptionsViewController = ListOptionsViewController()
+        listOptionsViewController.modalTransitionStyle = .coverVertical
+        listOptionsViewController.modalPresentationStyle = .custom
+        listOptionsViewController.transitioningDelegate = self
+        listOptionsViewController.delegate = self
+        listOptionsViewController.isDuplicatable = true
+        self.present(listOptionsViewController, animated: true, completion: nil)
+        self.view.layer.opacity = 0.5
+    }
+    
+    func presentListSelectorViewController(){
+        let listSelectorViewController = ListSelectorViewController()
+        listSelectorViewController.modalTransitionStyle = .coverVertical
+        listSelectorViewController.modalPresentationStyle = .custom
+        listSelectorViewController.transitioningDelegate = self
+        listSelectorViewController.isEditMode = isEditMode
+        listSelectorViewController.listStore = listStore
+        listSelectorViewController.delegate = self
+        self.present(listSelectorViewController, animated: true, completion: nil)
+        self.view.layer.opacity = 0.5
+    }
+    
+    func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
+        return HalfSizePresentationController(presentedViewController: presented, presenting: presentingViewController)
+    }
+    
+    @IBOutlet weak var bottomConstraint: NSLayoutConstraint!
+    var isMoved: Bool = false
+    @objc func keyboardWillShow(notification: NSNotification) {
+        if(isMoved)
+        {
+            return
+        }
+        guard let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else {
+           // if keyboard size is not available for some reason, dont do anything
+           return
+        }
+
+      // move the root view up by the distance of keyboard height
+        bottomConstraint.constant -= (keyboardSize.height - 30)
+        isMoved =  true
+    }
+    @objc func keyboardWillHide(notification: NSNotification) {
+      // move back the root view origin
+        bottomConstraint.constant = 0
+        isMoved = false
     }
     /*
     // MARK: - Navigation
@@ -287,22 +436,21 @@ extension TasksViewController: UITableViewDelegate, UITableViewDataSource {
         cell.isEditMode = isEditMode
         cell.listStore = listStore
         cell.fromTasks = true
+        cell.selectionStyle = .none
+        
         if indexPath.section == 0{
             cell.task = taskStore.unfinishedTask[indexPath.row]
-            cell.createCell(name: taskStore.unfinishedTask[indexPath.row].name)
+            cell.createCell(name: taskStore.unfinishedTask[indexPath.row].getName())
         }
         else{
             cell.task = taskStore.finishedTask[indexPath.row]
-            cell.createCell(name: taskStore.finishedTask[indexPath.row].name)
+            cell.createCell(name: taskStore.finishedTask[indexPath.row].getName())
         }
         return cell
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        if section == 0{
-            return "Tasks"
-        }
-        else{
+        if section == 1{
             if taskStore.finishedTask.count != 0{
                 return "Finished"
             }
@@ -323,7 +471,7 @@ extension TasksViewController: UITableViewDelegate, UITableViewDataSource {
             else{
                 task = taskStore.finishedTask[indexPath.row]
             }
-            taskStore.deleteTask(task)
+            taskStore.deleteTask(task: task)
             tableView.deleteRows(at: [indexPath], with: .automatic)
         }
     }
@@ -341,54 +489,43 @@ extension TasksViewController: UITableViewDelegate, UITableViewDataSource {
         taskModificationViewController.delegate = self
         navigationController?.pushViewController(taskModificationViewController, animated: true)
     }
-//    func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
-//        if sourceIndexPath.section == 0{
-//            taskStore.moveTask(from: sourceIndexPath.row, to: destinationIndexPath.row, task: taskStore.finishedTask[sourceIndexPath.row])
-//        }
-//        else{
-//            taskStore.moveTask(from: sourceIndexPath.row, to: destinationIndexPath.row, task: taskStore.unfinishedTask[sourceIndexPath.row])
-//        }
-//    }
-//
-//    func tableView(_ tableView: UITableView, targetIndexPathForMoveFromRowAt sourceIndexPath: IndexPath, toProposedIndexPath proposedDestinationIndexPath: IndexPath) -> IndexPath {
-//        let sourceSection = sourceIndexPath.section
-//        let destinationSection = proposedDestinationIndexPath.section
-//        //if drag from unfinished to finished
-//        if destinationSection < sourceSection {
-//            return IndexPath(row: 0, section: sourceSection)
-//        }
-//        else if destinationSection > sourceSection {
-//            return IndexPath(row: self.tableView(tableView, numberOfRowsInSection:sourceSection)-1, section: sourceSection)
-//        }
-//        return proposedDestinationIndexPath
-//    }
+    
+    func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
+        let header = view as! UITableViewHeaderFooterView
+        if isThemeWhite{
+            header.textLabel?.textColor = UIColor.gray
+        }
+        else{
+            header.textLabel?.textColor = UIColor.white
+        }
+    }
 }
 
 // MARK: - TaskTableViewCellDelegate
 extension TasksViewController: TaskTableViewCellDelegate{
     func taskTableViewCell(_ cell: TaskTableViewCell, didTapFinishButtonWithTask task: Task) {
-        let state = task.isFinished
+        let state = task.getIsFinished()
         if state == false{
-            task.isFinished = true
+            task.setIsFinished(isFinished: true)
         }
         else{
-            task.isFinished = false
+            task.setIsFinished(isFinished: false)
         }
         taskTable.reloadSections([0, 1], with: .automatic)
     }
 
     func taskTableViewCell(_ cell: TaskTableViewCell, didTapImportantButtonWithTask task: Task) {
-        if !task.isImportant{
+        if !task.getIsImportant(){
             for tmpTask in taskStore.allTask {
-                if tmpTask.id == task.id{
-                    task.isImportant = true
+                if tmpTask.getId() == task.getId(){
+                    task.setIsImportant(isImportant: true)
                 }
             }
         }
         else{
             for tmpTask in taskStore.allTask {
-                if tmpTask.id == task.id{
-                    task.isImportant = false
+                if tmpTask.getId() == task.getId(){
+                    task.setIsImportant(isImportant: false)
                 }
             }
         }
@@ -396,26 +533,26 @@ extension TasksViewController: TaskTableViewCellDelegate{
     }
     func taskTableViewCell(_ cell: TaskTableViewCell, didTapCheckButtonWithTask task: Task) {
         for tmpTask in taskStore.allTask{
-            if tmpTask.id == task.id{
-                if task.isSelected == false{
-                    task.isSelected = true
+            if tmpTask.getId() == task.getId(){
+                if task.getIsSelected() == false{
+                    task.setIsSelected(isSelected: true)
                 }
                 else{
                     isSelectedAll = false
-                    task.isSelected = false
+                    task.setIsSelected(isSelected: false)
                 }
             }
         }
         isSelected = false
         selectedArr = []
         for tmpTask in taskStore.unfinishedTask{
-            if tmpTask.isSelected{
+            if tmpTask.getIsSelected(){
                 isSelected = true
                 selectedArr?.append(tmpTask)
             }
         }
         for tmpTask in taskStore.finishedTask{
-            if tmpTask.isSelected{
+            if tmpTask.getIsSelected(){
                 isSelected = true
                 selectedArr?.append(tmpTask)
             }
@@ -438,7 +575,13 @@ extension TasksViewController: TaskTableViewCellDelegate{
 
 // MARK: - DueViewControllerDelegate
 extension TasksViewController: DueViewControllerDelegate{
+    func dueViewController(_ viewController: UIViewController, didTapAtDoneWithOpacity opacity: Float) {
+        self.view.layer.opacity = opacity
+        self.taskTable.reloadData()
+    }
+    
     func dueViewController(_ viewController: UIViewController, didTapAtIndex index: Int, dateForIndex date: Date?){
+        self.view.layer.opacity = 1.0
         var due = String()
         let cell = DueTableViewCell()
         let nextWeekDate = cell.getNextWeek()
@@ -467,13 +610,17 @@ extension TasksViewController: DueViewControllerDelegate{
                 dueIsOn = true
                 dueToggleButton.setTitle("Due" + due, for: .normal)
                 dueToggleButton.setImage(UIImage(systemName: "calendar.circle.fill"), for: .normal)
+                if reminderIsOn{
+                    reminderToggleButton.setTitle("Remind me before due", for: .normal)
+                }
             }
         }
+        
         else{
             for tmpTask in taskStore.allTask{
-                if tmpTask.isSelected{
-                    tmpTask.dueDate = date
-                    tmpTask.isSelected = false
+                if tmpTask.getIsSelected(){
+                    tmpTask.setDueDate(dueDate: date!)
+                    tmpTask.setIsSelected(isSelected: false)
                 }
             }
             taskTable.reloadSections([0, 1], with: .automatic)
@@ -483,7 +630,11 @@ extension TasksViewController: DueViewControllerDelegate{
 
 // MARK: - TaskModificationViewControllerDelegate
 extension TasksViewController: TaskModificationViewControllerDelegate{
-    func taskModificationViewController(_ viewController: UIViewController) {
+    func taskModificationViewControllerDidChangeTask(_ viewController: UIViewController) {
+        taskTable.reloadSections([0, 1], with: .automatic)
+    }
+    func taskModificationViewController(_ viewController: UIViewController, didTapDeleteWithTask task: Task) {
+        taskStore.deleteTask(task: task)
         taskTable.reloadSections([0, 1], with: .automatic)
     }
 }
@@ -500,92 +651,96 @@ extension TasksViewController: ListOptionsViewControllerDelegate{
         listOptionBarButtonItem.image = .none
         if taskStore.unfinishedTask.count > 0{
             for i in 0...(taskStore.unfinishedTask.count - 1){
-                taskStore.unfinishedTask[i].isSelected = false
+                taskStore.unfinishedTask[i].setIsSelected(isSelected: false)
             }
         }
         if taskStore.finishedTask.count > 0{
             for i in 0...(taskStore.finishedTask.count - 1){
-                taskStore.finishedTask[i].isSelected = false
+                taskStore.finishedTask[i].setIsSelected(isSelected: false)
             }
         }
         selectAllButton.setTitle("Select all", for: .normal)
         let attributeText = NSMutableAttributedString(string: selectAllButton.title(for: .normal) ?? "", attributes: [.font: UIFont.systemFont(ofSize: 12.0)])
         selectAllButton.setAttributedTitle(attributeText, for: .normal)
 
+        self.view.layer.opacity = 1
         taskTable.reloadSections([0,1], with: .automatic)
     }
     
     func listOptionsViewController(_ viewController: UIViewController, didTapAtImportance bool: Bool, didSelectSortOptionsWithIndex index: Int) {
         switch index{
         case 0:
-            taskStore.allTask = taskStore.allTask.sorted(by: {$0.isImportant && !$1.isImportant})
+            taskStore.allTask = taskStore.allTask.sorted(by: {$0.getIsImportant() && !$1.getIsImportant()})
         case 1:
-            taskStore.allTask = taskStore.allTask.sorted(by: {$0.name < $1.name})
+            taskStore.allTask = taskStore.allTask.sorted(by: {$0.getName() < $1.getName()})
         case 2:
-            taskStore.allTask = taskStore.allTask.sorted(by: {$0.dueDate! < $1.dueDate!})
+            var noDueTask = [Task]()
+            var dueTask = [Task]()
+            for task in taskStore.allTask{
+                if task.getDueDate() == nil{
+                    noDueTask.append(task)
+                }
+                else{
+                    dueTask.append(task)
+                }
+            }
+            dueTask = dueTask.sorted(by: {$0.getDueDate()! < $1.getDueDate()!})
+            taskStore.allTask.removeAll()
+            for task in dueTask {
+                taskStore.allTask.append(task)
+            }
+            for task in noDueTask {
+                taskStore.allTask.append(task)
+            }
         case 3:
-            taskStore.allTask = taskStore.allTask.sorted(by: {$0.isMyDay && !$1.isMyDay})
+            taskStore.allTask = taskStore.allTask.sorted(by: {$0.getIsMyDay() && !$1.getIsMyDay()})
         default:
             break
         }
+        self.view.layer.opacity = 1
         taskTable.reloadSections([0,1], with: .automatic)
     }
     
     func listOptionsViewController(_ viewController: UIViewController, didTapAtChangeTheme bool: Bool, didSelectThemeWithType type: themeType) {
-        if type == .white{
-            isThemeWhite = true
-        }
-        else{
-            isThemeWhite = false
-        }
-        switch type {
-        case .white:
-            view.backgroundColor = UIColor.white
-            taskTable.backgroundColor = UIColor.white
-        case .red:
-            view.backgroundColor = UIColor.systemRed
-            taskTable.backgroundColor = UIColor.systemRed
-        case .blue:
-            view.backgroundColor = UIColor.systemBlue
-            taskTable.backgroundColor = UIColor.systemBlue
-        case .green:
-            view.backgroundColor = UIColor.systemGreen
-            taskTable.backgroundColor = UIColor.systemGreen
-        case .yellow:
-            view.backgroundColor = UIColor.systemYellow
-            taskTable.backgroundColor = UIColor.systemYellow
-        case .purple:
-            view.backgroundColor = UIColor.systemPurple
-            taskTable.backgroundColor = UIColor.systemPurple
-        case .teal:
-            view.backgroundColor = UIColor.systemTeal
-            taskTable.backgroundColor = UIColor.systemTeal
-        }
-        changeButtonColor()
+        account.setCurrentThemeType(currentThemeType: type)
+        changeTheme(type: type)
+        self.view.layer.opacity = 1
     }
     
     func listOptionsViewController(_ viewController: UIViewController, didTapAtDuplicateList bool: Bool) {
-        let newList = listStore.createList(name: "Tasks")
+        let newList = List(name: "Tasks")
+        newList.setAccountId(accountID: account.getID())
+        listStore.createList(list: newList)
         for tmpTask in taskStore.allTask{
-            tmpTask.listID = newList.id
+            tmpTask.setListId(listID: newList.getListID())
             newList.allTask.append(tmpTask)
         }
         taskTable.reloadSections([0, 1], with: .automatic)
+        self.view.layer.opacity = 1
     }
     
+    func listOptionsViewController(_ viewController: UIViewController, didTapAtDoneWithOpacity opacity: Float) {
+        self.view.layer.opacity = opacity
+        self.taskTable.reloadData()
+    }
     
 }
 
 // MARK: - ListSelectorViewControllerDelegate
 extension TasksViewController: ListSelectorViewControllerDelegate{
+    func listSelectorViewController(_ viewController: UIViewController, didTapAtDoneWithOpacity opacity: Float) {
+        self.view.layer.opacity = opacity
+        self.taskTable.reloadData()
+    }
+    
     func listSelectorViewController(_ viewController: UIViewController, selectForListOptions bool: Bool, listForIndex list: List?) {
         for tmpList in listStore.allList{
-            if tmpList.id == list?.id{
+            if tmpList.getListID() == list?.getListID(){
                 
                 for tmpTask in taskStore.allTask{
-                    let index = taskStore.allTask.firstIndex(where: {$0.id == tmpTask.id})
-                    if tmpTask.isSelected{
-                        tmpTask.listID = list!.id
+                    let index = taskStore.allTask.firstIndex(where: {$0.getId() == tmpTask.getId()})
+                    if tmpTask.getIsSelected(){
+                        tmpTask.setListId(listID: list!.getListID())
                         tmpList.allTask.append(tmpTask)
                         taskStore.allListedTask.append(tmpTask)
                         taskStore.allTask.remove(at: index!)
@@ -594,6 +749,7 @@ extension TasksViewController: ListSelectorViewControllerDelegate{
                 
             }
         }
+        self.view.layer.opacity = 1.0
         taskTable.reloadSections([0,1], with: .automatic)
     }
     
@@ -602,6 +758,3 @@ extension TasksViewController: ListSelectorViewControllerDelegate{
     }
 }
 
-//protocol TaskViewControllerDelegate{
-//    func taskViewController(_ viewController: UIViewController, didTapAtCancel bool: Bool)
-//}

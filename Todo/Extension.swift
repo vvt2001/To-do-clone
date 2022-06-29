@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 extension Date {
     var dayofTheWeek: String {
@@ -13,10 +14,10 @@ extension Date {
           // day number starts from 1 but array count from 0
           return daysOfTheWeek[dayNumber - 1]
      }
-    var day: String
+    var day: Int
     {
         let dayCount: Int = Calendar.current.component(.day, from: self)
-        return "\(dayCount)"
+        return dayCount
     }
     var week: Int
     {
@@ -25,11 +26,11 @@ extension Date {
     }
     var monthString: String
     {
-        let monthCount = Calendar.current.component(.weekday, from: self)
+        let monthCount = Calendar.current.component(.month, from: self)
         // day number starts from 1 but array count from 0
         return monthsCount[monthCount - 1]
     }
-     private var daysOfTheWeek: [String] {
+    private var daysOfTheWeek: [String] {
           return  ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
      }
     var dayOfTheWeekByInt: Int
@@ -45,4 +46,4 @@ extension Date {
         let date = dateFormatter.string(from: self)
         return date
     }
-  }
+}

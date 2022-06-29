@@ -7,7 +7,7 @@
 
 import UIKit
 
-class DueViewController: UIViewController {
+class DueViewController: UIViewController, UIViewControllerTransitioningDelegate {
 
     @IBOutlet weak var navBar: UINavigationBar!
     @IBOutlet weak var optionsTable: UITableView!
@@ -18,6 +18,7 @@ class DueViewController: UIViewController {
 
     @IBAction func dismissView(){
         self.dismiss(animated: true)
+        delegate?.dueViewController(self, didTapAtDoneWithOpacity: 1.0)
     }
     
     override func viewDidLoad() {
@@ -31,6 +32,19 @@ class DueViewController: UIViewController {
         optionsTable.rowHeight = 60
     }
 
+    func presentDatePickerViewController()
+    {
+        let datePickerViewController = DatePickerViewController()
+        datePickerViewController.transitioningDelegate = self
+        datePickerViewController.modalTransitionStyle = .crossDissolve
+        datePickerViewController.modalPresentationStyle = .custom
+        datePickerViewController.delegate = self
+        self.present(datePickerViewController, animated: true, completion: nil)
+    }
+    
+    func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
+        return HalfSizePresentationController(presentedViewController: presented, presenting: presentingViewController)
+    }
 
     /*
     // MARK: - Navigation
@@ -89,9 +103,7 @@ extension DueViewController: UITableViewDelegate, UITableViewDataSource {
             }
             dueDate = Calendar.current.date(byAdding: dateComponent, to: date)!
         case 3:
-            let datePickerViewController = DatePickerViewController()
-            datePickerViewController.delegate = self
-            present(datePickerViewController, animated: true, completion: nil)
+            presentDatePickerViewController()
         default:
             break
         }
@@ -104,10 +116,15 @@ extension DueViewController: UITableViewDelegate, UITableViewDataSource {
 
 protocol DueViewControllerDelegate{
     func dueViewController(_ viewController: UIViewController, didTapAtIndex index: Int, dateForIndex date: Date?)
+    func dueViewController(_ viewController: UIViewController, didTapAtDoneWithOpacity  opacity: Float)
 }
 
 // MARK: - DatePickerViewControllerDelegate
 extension DueViewController: DatePickerViewControllerDelegate{
+    func datePickerViewController(_ viewController: UIViewController, didTapAtDoneWithOpacity opacity: Float) {
+        delegate?.dueViewController(self, didTapAtDoneWithOpacity: opacity)
+    }
+    
     func datePickerViewController(_ viewController: UIViewController, didSetDue date: Date) {
         dueDate = date
         delegate?.dueViewController(self, didTapAtIndex: 3, dateForIndex: dueDate)

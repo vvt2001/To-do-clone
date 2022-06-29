@@ -22,35 +22,43 @@ class ThemeSelectorViewController: UIViewController {
     var delegate: ThemeSelectorViewControllerDelegate?
     
     @IBAction func changeThemeToWhite(_ sender: UIButton){
+        self.presentingViewController?.presentingViewController?.dismiss(animated: true, completion: nil)
         delegate?.themeSelectorViewController(self, didSelectThemeWithType: .white)
     }
     
     @IBAction func changeThemeToRed(_ sender: UIButton){
+        self.presentingViewController?.presentingViewController?.dismiss(animated: true, completion: nil)
         delegate?.themeSelectorViewController(self, didSelectThemeWithType: .red)
     }
     
     @IBAction func changeThemeToBlue(_ sender: UIButton){
+        self.presentingViewController?.presentingViewController?.dismiss(animated: true, completion: nil)
         delegate?.themeSelectorViewController(self, didSelectThemeWithType: .blue)
     }
     
     @IBAction func changeThemeToGreen(_ sender: UIButton){
+        self.presentingViewController?.presentingViewController?.dismiss(animated: true, completion: nil)
         delegate?.themeSelectorViewController(self, didSelectThemeWithType: .green)
     }
     
     @IBAction func changeThemeToYellow(_ sender: UIButton){
+        self.presentingViewController?.presentingViewController?.dismiss(animated: true, completion: nil)
         delegate?.themeSelectorViewController(self, didSelectThemeWithType: .yellow)
     }
     
     @IBAction func changeThemeToPurple(_ sender: UIButton){
+        self.presentingViewController?.presentingViewController?.dismiss(animated: true, completion: nil)
         delegate?.themeSelectorViewController(self, didSelectThemeWithType: .purple)
     }
     
     @IBAction func changeThemeToTeal(_ sender: UIButton){
+        self.presentingViewController?.presentingViewController?.dismiss(animated: true, completion: nil)
         delegate?.themeSelectorViewController(self, didSelectThemeWithType: .teal)
     }
     
     @IBAction func dismiss(_ sender: UIButton){
         self.presentingViewController?.presentingViewController?.dismiss(animated: true, completion: nil)
+        delegate?.themeSelectorViewController(self, didTapAtDoneWithOpacity: 1.0)
     }
     
     @IBAction func goBack(_ sender: UIButton){
@@ -79,4 +87,5 @@ class ThemeSelectorViewController: UIViewController {
 
 protocol ThemeSelectorViewControllerDelegate{
     func themeSelectorViewController(_ viewController: UIViewController, didSelectThemeWithType type: themeType)
+    func themeSelectorViewController(_ viewController: UIViewController, didTapAtDoneWithOpacity  opacity: Float)
 }

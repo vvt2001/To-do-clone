@@ -31,9 +31,17 @@ class TaskTableViewCell: UITableViewCell {
         // Initialization code
     }
     
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        self.layer.borderWidth = 0.1
+        self.layer.masksToBounds = true
+        self.layer.cornerRadius = 15
+        self.backgroundColor = .white
+        contentView.frame = contentView.frame.inset(by: UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8))
+    }
+    
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-        
     }
 
 
@@ -68,14 +76,14 @@ class TaskTableViewCell: UITableViewCell {
     func createCell(name: String){
         self.taskName.text = name
         if isEditMode == false{
-            if task.isFinished{
+            if task.getIsFinished(){
                 self.finishedButton.setImage(UIImage(systemName: "checkmark.circle.fill"), for: .normal)
                 //self.finishedButton.imageView?.image = UIImage(systemName: "checkmark.circle.fill")
             }
             else{
                 self.finishedButton.setImage(UIImage(systemName: "checkmark.circle"), for: .normal)
             }
-            if task.isImportant{
+            if task.getIsImportant(){
                 self.importantButton.setImage(UIImage(systemName: "star.fill"), for: .normal)
             }
             else{
@@ -84,7 +92,7 @@ class TaskTableViewCell: UITableViewCell {
             importantButton.isHidden = false
         }
         else{
-            if task.isSelected{
+            if task.getIsSelected(){
                 self.finishedButton.setImage(UIImage(systemName: "checkmark.circle.fill"), for: .normal)
             }
             else{
@@ -92,27 +100,27 @@ class TaskTableViewCell: UITableViewCell {
             }
             importantButton.isHidden = true
         }
-        if task.dueDate != nil{
-            let dueDateDayOfWeek = task.dueDate?.dayofTheWeek
+        if task.getDueDate() != nil{
+            let dueDateDayOfWeek = task.getDueDate()!.dayofTheWeek
             let dateFormater = DateFormatter()
             dateFormater.dateFormat = "dd/MM/yy"
-            let dueDate = dateFormater.string(from: task.dueDate!)
-            self.taskDueDateLabel.text = dueDateDayOfWeek! + ", " + dueDate
+            let dueDate = dateFormater.string(from: task.getDueDate()!)
+            self.taskDueDateLabel.text = dueDateDayOfWeek + ", " + dueDate
         }
         else{
             self.taskDueDateLabel.text = ""
         }
-        if task.isMyDay{
+        if task.getIsMyDay(){
             self.myDayLabel.text = "My Day"
         }
         else{
             self.myDayLabel.text = ""
         }
         
-        if task.listID != ""{
+        if task.getListId() != ""{
             for list in listStore.allList{
-                if list.id == task.listID{
-                    self.listNameLabel.text = list.name
+                if list.getListID() == task.getListId(){
+                    self.listNameLabel.text = list.getName()
                 }
             }
         }

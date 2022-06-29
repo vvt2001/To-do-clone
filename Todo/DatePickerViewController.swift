@@ -25,6 +25,7 @@ class DatePickerViewController: UIViewController {
     @IBAction func setDue(_ sender: UIButton){
         delegate?.datePickerViewController(self, didSetDue: currentDate)
         self.presentingViewController?.presentingViewController?.dismiss(animated: true, completion: nil)
+        delegate?.datePickerViewController(self, didTapAtDoneWithOpacity: 1.0)
     }
     
     override func viewDidLoad() {
@@ -48,4 +49,5 @@ class DatePickerViewController: UIViewController {
 
 protocol DatePickerViewControllerDelegate{
     func datePickerViewController(_ viewController: UIViewController, didSetDue date: Date)
+    func datePickerViewController(_ viewController: UIViewController, didTapAtDoneWithOpacity  opacity: Float)
 }

@@ -2,6 +2,7 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="20037" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
+        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="20020"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
@@ -14,6 +15,7 @@
                 <outlet property="addTaskField" destination="bSb-8x-4t0" id="fVi-qD-49q"/>
                 <outlet property="addTaskFunction" destination="m8z-54-93y" id="RPu-wm-cao"/>
                 <outlet property="addTaskOptions" destination="kAr-NW-awI" id="s9t-Pm-dNj"/>
+                <outlet property="bottomConstraint" destination="bT6-rY-iLf" id="FIr-ek-2Tx"/>
                 <outlet property="deleteButton" destination="Yts-Uq-0ke" id="7KY-6n-czj"/>
                 <outlet property="dueToggleButton" destination="d2k-8g-D2L" id="jal-bq-QYN"/>
                 <outlet property="editOptions" destination="itm-Vj-9jH" id="5JF-hh-719"/>
@@ -23,6 +25,7 @@
                 <outlet property="selectAllButton" destination="IlN-PO-Jy3" id="NjV-NY-Y7c"/>
                 <outlet property="setDueButton" destination="yXp-BA-d2S" id="NIu-7F-rl4"/>
                 <outlet property="taskTable" destination="ao8-lI-9jj" id="zFd-YY-jt8"/>
+                <outlet property="toolBarStackView" destination="7g1-ZG-Ke7" id="W4g-dz-SmE"/>
                 <outlet property="view" destination="uAX-Pd-ybp" id="AdZ-Mw-0YI"/>
                 <outletCollection property="myButtons" destination="Vjh-7V-97l" collectionClass="NSMutableArray" id="5FE-pa-mDY"/>
                 <outletCollection property="myButtons" destination="X4Q-Mi-8D2" collectionClass="NSMutableArray" id="YPC-MA-TpE"/>
@@ -39,15 +42,15 @@
             <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
+                <tableView clipsSubviews="YES" contentMode="scaleToFill" horizontalHuggingPriority="249" horizontalCompressionResistancePriority="749" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="ao8-lI-9jj">
+                    <rect key="frame" x="8" y="44" width="398" height="737"/>
+                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                </tableView>
                 <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="7g1-ZG-Ke7">
-                    <rect key="frame" x="0.0" y="44" width="414" height="818"/>
+                    <rect key="frame" x="0.0" y="781" width="414" height="81"/>
                     <subviews>
-                        <tableView clipsSubviews="YES" contentMode="scaleToFill" horizontalHuggingPriority="249" horizontalCompressionResistancePriority="749" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="ao8-lI-9jj">
-                            <rect key="frame" x="0.0" y="0.0" width="414" height="737"/>
-                            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                        </tableView>
                         <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="kAr-NW-awI">
-                            <rect key="frame" x="0.0" y="737" width="414" height="31"/>
+                            <rect key="frame" x="0.0" y="0.0" width="414" height="31"/>
                             <subviews>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Vjh-7V-97l">
                                     <rect key="frame" x="0.0" y="0.0" width="138" height="31"/>
@@ -75,8 +78,8 @@
                                 </button>
                             </subviews>
                         </stackView>
-                        <stackView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" horizontalCompressionResistancePriority="751" translatesAutoresizingMaskIntoConstraints="NO" id="m8z-54-93y">
-                            <rect key="frame" x="0.0" y="768" width="414" height="50"/>
+                        <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="m8z-54-93y">
+                            <rect key="frame" x="0.0" y="31" width="414" height="50"/>
                             <subviews>
                                 <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qJW-iz-mg7">
                                     <rect key="frame" x="8" y="8" width="43.5" height="34"/>
@@ -88,14 +91,16 @@
                                 </button>
                                 <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Add a Task" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="bSb-8x-4t0">
                                     <rect key="frame" x="51.5" y="8" width="354.5" height="34"/>
+                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                     <textInputTraits key="textInputTraits"/>
                                 </textField>
                             </subviews>
+                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <edgeInsets key="layoutMargins" top="8" left="8" bottom="8" right="8"/>
                         </stackView>
                         <stackView hidden="YES" opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="itm-Vj-9jH">
-                            <rect key="frame" x="0.0" y="818" width="414" height="0.0"/>
+                            <rect key="frame" x="0.0" y="81" width="414" height="0.0"/>
                             <subviews>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="IlN-PO-Jy3">
                                     <rect key="frame" x="0.0" y="0.0" width="103.5" height="0.0"/>
@@ -145,19 +150,16 @@
             <viewLayoutGuide key="safeArea" id="DWp-0S-352"/>
             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
             <constraints>
-                <constraint firstItem="DWp-0S-352" firstAttribute="top" secondItem="7g1-ZG-Ke7" secondAttribute="top" id="KAF-1o-uXz"/>
                 <constraint firstItem="7g1-ZG-Ke7" firstAttribute="trailing" secondItem="DWp-0S-352" secondAttribute="trailing" id="LRV-k8-KpB"/>
                 <constraint firstItem="7g1-ZG-Ke7" firstAttribute="leading" secondItem="DWp-0S-352" secondAttribute="leading" id="M4I-F2-b1B"/>
+                <constraint firstItem="ao8-lI-9jj" firstAttribute="leading" secondItem="DWp-0S-352" secondAttribute="leading" constant="8" id="WP1-VR-yfG"/>
                 <constraint firstItem="7g1-ZG-Ke7" firstAttribute="bottom" secondItem="DWp-0S-352" secondAttribute="bottom" id="bT6-rY-iLf"/>
+                <constraint firstItem="ao8-lI-9jj" firstAttribute="top" secondItem="DWp-0S-352" secondAttribute="top" id="j45-bp-gSo"/>
+                <constraint firstItem="ao8-lI-9jj" firstAttribute="bottom" secondItem="7g1-ZG-Ke7" secondAttribute="top" id="j74-U2-PCa"/>
+                <constraint firstItem="ao8-lI-9jj" firstAttribute="trailing" secondItem="DWp-0S-352" secondAttribute="trailing" constant="-8" id="u6A-k0-fzc"/>
             </constraints>
             <point key="canvasLocation" x="549" y="184"/>
         </view>
-        <stackView opaque="NO" contentMode="scaleToFill" id="ml5-A1-1EK">
-            <rect key="frame" x="0.0" y="0.0" width="200" height="110"/>
-            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-            <viewLayoutGuide key="safeArea" id="NTh-oT-Ben"/>
-            <point key="canvasLocation" x="268" y="-192"/>
-        </stackView>
     </objects>
     <resources>
         <image name="bell" catalog="system" width="128" height="124"/>

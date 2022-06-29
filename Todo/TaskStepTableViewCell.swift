@@ -13,29 +13,29 @@ class TaskStepTableViewCell: UITableViewCell {
     @IBOutlet weak var deleteButton: UIButton!
     
     var delegate: TaskStepTableViewCellDelegate?
-    var step: String!
-    var currentIndex: IndexPath?
     var task: Task!
+    var step: Step!
+    var currentIndexPath: IndexPath?
     
     @IBAction func finishedStep(_ sender: UIButton){
-        if task.steps[currentIndex!.row].isFinished == false{
-            task.steps[currentIndex!.row].isFinished = true
+        if step.isFinished == false{
+            step.setIsFinished(newIsFinished: true)
             self.finishedButton.imageView?.image = UIImage(systemName: "checkmark.circle.fill")
         }
         else{
-            task.steps[currentIndex!.row].isFinished = false
+            step.setIsFinished(newIsFinished: false)
             self.finishedButton.imageView?.image = UIImage(systemName: "checkmark.circle")
         }
         delegate?.taskStepTableViewCell(self)
     }
     @IBAction func deleteStep(_ sender: UIButton){
-        delegate?.taskStepTableViewCell(self, didSelectDeleteAtIndexPath: currentIndex!)
+        delegate?.taskStepTableViewCell(self, didSelectDeleteWithStep: step, didSelectDeleteAtIndexPath: currentIndexPath!)
     }
     
-    func createCell(task: Task, index: IndexPath){
-            currentIndex = index
-            stepNameField.text = task.steps[index.row].name
-            if task.steps[currentIndex!.row].isFinished == false{
+    func createCell(task: Task, indexPath: IndexPath){
+            currentIndexPath = indexPath
+            stepNameField.text = step.name
+            if step.isFinished == false{
                 self.finishedButton.imageView?.image = UIImage(systemName: "checkmark.circle")
             }
             else{
@@ -45,10 +45,10 @@ class TaskStepTableViewCell: UITableViewCell {
     
     @IBAction func changeStepName(_ sender: UITextField){
         if let stepName = stepNameField.text, !stepName.isEmpty{
-            task.steps[currentIndex!.row].name = stepName
+            step.setName(newName: stepName)
         }
         else{
-            task.deleteStep(index: currentIndex!.row)
+            task.deleteStep(step: step)
             delegate?.taskStepTableViewCell(self)
         }
     }
@@ -67,6 +67,6 @@ class TaskStepTableViewCell: UITableViewCell {
 }
 
 protocol TaskStepTableViewCellDelegate{
-    func taskStepTableViewCell(_ cell: TaskStepTableViewCell, didSelectDeleteAtIndexPath indexPath: IndexPath)
+    func taskStepTableViewCell(_ cell: TaskStepTableViewCell, didSelectDeleteWithStep step: Step, didSelectDeleteAtIndexPath indexPath: IndexPath)
     func taskStepTableViewCell(_ cell: TaskStepTableViewCell)
 }

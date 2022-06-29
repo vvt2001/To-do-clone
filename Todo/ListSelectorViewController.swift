@@ -20,6 +20,7 @@ class ListSelectorViewController: UIViewController {
     
     @IBAction func dismissView(){
         self.dismiss(animated: true)
+        delegate?.listSelectorViewController(self, didTapAtDoneWithOpacity: 1.0)
     }
     
     override func viewDidLoad() {
@@ -65,9 +66,11 @@ extension ListSelectorViewController: UITableViewDelegate, UITableViewDataSource
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if isEditMode{
             delegate?.listSelectorViewController(self, selectForListOptions: true, listForIndex: listStore.allList[indexPath.row])
+            delegate?.listSelectorViewController(self, didTapAtDoneWithOpacity: 1.0)
         }
         else{
             delegate?.listSelectorViewController(self, selectForAddTask: true, listForIndex: listStore.allList[indexPath.row])
+            delegate?.listSelectorViewController(self, didTapAtDoneWithOpacity: 1.0)
         }
         self.dismiss(animated: true)
     }
@@ -76,5 +79,6 @@ extension ListSelectorViewController: UITableViewDelegate, UITableViewDataSource
 protocol ListSelectorViewControllerDelegate{
     func listSelectorViewController(_ viewController: UIViewController, selectForAddTask bool: Bool, listForIndex list: List?)
     func listSelectorViewController(_ viewController: UIViewController, selectForListOptions bool: Bool, listForIndex list: List?)
+    func listSelectorViewController(_ viewController: UIViewController, didTapAtDoneWithOpacity  opacity: Float)
 }
 

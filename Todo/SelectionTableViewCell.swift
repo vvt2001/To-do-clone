@@ -16,7 +16,7 @@ class SelectionTableViewCell: UITableViewCell {
     var taskStore: TaskStore!
     var listStore: ListStore!
     
-    let optionList = ["My day","Important","Planned","Assigned to me","Tasks"]
+    let optionList = ["My day","Important","Planned","Tasks"]
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -58,14 +58,6 @@ class SelectionTableViewCell: UITableViewCell {
                 self.taskCount.text = ""
             }
         case 3:
-            self.icon.image = UIImage(systemName: "person")
-            if taskStore.assignedToMeTask.count != 0{
-                self.taskCount.text = "\(taskStore.assignedToMeTask.count)"
-            }
-            else{
-                self.taskCount.text = ""
-            }
-        case 4:
             self.icon.image = UIImage(systemName: "checkmark.icloud")
             if taskStore.normalTask.count != 0{
                 self.taskCount.text = "\(taskStore.normalTask.count)"

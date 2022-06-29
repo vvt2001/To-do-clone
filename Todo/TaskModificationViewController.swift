@@ -7,79 +7,84 @@
 
 import UIKit
 
-class TaskModificationViewController: UIViewController {
+class TaskModificationViewController: UIViewController, UIViewControllerTransitioningDelegate {
 
-    @IBOutlet weak var deleteButton: UIButton!
-    @IBOutlet weak var optionTable: UITableView!
-    @IBOutlet weak var finishedButton: UIButton!
-    @IBOutlet weak var importantButton: UIButton!
-    @IBOutlet weak var taskNameField: UITextField!
-    @IBOutlet weak var dateCreatedLabel: UILabel!
-    @IBOutlet weak var addStep: UIButton!
-    @IBOutlet weak var stepNameField: UITextField!
+    @IBOutlet weak private var deleteButton: UIButton!
+    @IBOutlet weak private var optionTable: UITableView!
+    @IBOutlet weak private var finishedButton: UIButton!
+    @IBOutlet weak private var importantButton: UIButton!
+    @IBOutlet weak private var taskNameField: UITextField!
+    @IBOutlet weak private var dateCreatedLabel: UILabel!
+    @IBOutlet weak private var addStep: UIButton!
+    @IBOutlet weak private var stepNameField: UITextField!
     
     var task: Task!
     var delegate: TaskModificationViewControllerDelegate?
     
-    @IBAction func changeTaskName(_ sender: UITextField){
+    @IBAction private func changeTaskName(_ sender: UITextField){
         if let taskName = taskNameField.text, !taskName.isEmpty{
-            task.name = taskName
-            delegate?.taskModificationViewController?(self)
+            task.setName(name: taskName)
+            self.navigationItem.title = taskName
+            delegate?.taskModificationViewControllerDidChangeTask?(self)
         }
     }
 
-    @IBAction func changeFinished(_ sender: UIButton){
-        if !task.isFinished{
-            task.isFinished = true
+    @IBAction private func changeFinished(_ sender: UIButton){
+        if !task.getIsFinished(){
+            task.setIsFinished(isFinished: true)
             self.finishedButton.setImage(UIImage(systemName: "checkmark.circle.fill"), for: .normal)
-            print("\(task.isFinished)")
         }
         else{
-            task.isFinished = false
+            task.setIsFinished(isFinished: false)
             self.finishedButton.setImage(UIImage(systemName: "checkmark.circle"), for: .normal)
-            print("\(task.isFinished)")
         }
-        delegate?.taskModificationViewController?(self)
+        delegate?.taskModificationViewControllerDidChangeTask?(self)
 
     }
-    @IBAction func changeImportant(_ sender: UIButton){
-        if !task.isImportant{
-            task.isImportant = true
+    @IBAction private func changeImportant(_ sender: UIButton){
+        if !task.getIsImportant(){
+            task.setIsImportant(isImportant: true)
             self.importantButton.setImage(UIImage(systemName: "star.fill"), for: .normal)
-            print("\(task.isImportant)")
+            print("\(task.getIsImportant())")
         }
         else{
-            task.isImportant = false
+            task.setIsImportant(isImportant: false)
             self.importantButton.setImage(UIImage(systemName: "star"), for: .normal)
-            print("\(task.isImportant)")
+            print("\(task.getIsImportant())")
         }
-        delegate?.taskModificationViewController?(self)
+        delegate?.taskModificationViewControllerDidChangeTask?(self)
 
     }
-    @IBAction func addStep(_ sender: UIButton){
+    @IBAction private func addStep(_ sender: UIButton){
         if let stepName = stepNameField.text, !stepName.isEmpty{
-            let step = Step(name: stepName)
-            task.createStep(name: stepName)
+            let newStep = Step(name: stepName, taskID: task.getId())
+            task.createStep(step: newStep)
             var indexPath = IndexPath()
-            if let index = task.steps.lastIndex(of: step){
+            if let index = task.steps.lastIndex(of: newStep){
                 indexPath = IndexPath(row: index, section: 0)
             }
             optionTable.insertRows(at: [indexPath], with: .automatic)
             stepNameField.text = .none
         }
     }
+    
+    @IBAction private func deleteTask(_ sender: UIButton) {
+        delegate?.taskModificationViewController?(self, didTapDeleteWithTask: task)
+        navigationController?.popViewController(animated: true)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
-        taskNameField.text = task.name
-        if task.isFinished{
+        taskNameField.text = task.getName()
+        if task.getIsFinished(){
             self.finishedButton.imageView?.image = UIImage(systemName: "checkmark.circle.fill")
         }
         else{
             self.finishedButton.imageView?.image = UIImage(systemName: "checkmark.circle")
         }
-        if task.isImportant{
+        if task.getIsImportant(){
             self.importantButton.imageView?.image = UIImage(systemName: "star.fill")
         }
         else{
@@ -92,6 +97,73 @@ class TaskModificationViewController: UIViewController {
         self.optionTable.register(UINib(nibName: "ModifyOptionTableViewCell", bundle: Bundle.main), forCellReuseIdentifier: "ModifyOptionTableViewCell")
         
         optionTable.rowHeight = 50
+        
+        self.title = task.getName()
+        let tapGesture = UITapGestureRecognizer(target: view, action: #selector(UIView.endEditing))
+        view.addGestureRecognizer(tapGesture)
+        tapGesture.cancelsTouchesInView = false
+        
+        dateCreatedLabel.text = "Created " +  task.getCreateDate().date
+    }
+    
+    private func presentDueViewController(){
+        let dueViewController = DueViewController()
+        dueViewController.transitioningDelegate = self
+        dueViewController.modalTransitionStyle = .coverVertical
+        dueViewController.modalPresentationStyle = .custom
+        dueViewController.delegate = self
+        self.view.layer.opacity = 0.5
+        self.present(dueViewController, animated: true, completion: nil)
+    }
+    
+    private func presentNoteViewController(){
+        let noteViewController = NoteViewController()
+        noteViewController.task = task
+        noteViewController.delegate = self
+        self.present(noteViewController, animated: true, completion: nil)
+    }
+    
+    func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
+        return HalfSizePresentationController(presentedViewController: presented, presenting: presentingViewController)
+    }
+    
+    private func requestNotification(task: Task){
+        let center = UNUserNotificationCenter.current()
+        
+        let content = UNMutableNotificationContent()
+        content.title = NSString.localizedUserNotificationString(forKey: "Task Management", arguments: nil)
+        content.body = NSString.localizedUserNotificationString(forKey: "'\(task.getName())' is about to meets due. Make sure to finish it.", arguments: nil)
+        content.sound = UNNotificationSound.default
+        content.badge = 1
+        
+        var remindDate = Date()
+        if let dueDate = task.getDueDate() {
+            remindDate = Calendar.current.date(bySettingHour: 21, minute: 0, second: 0, of: dueDate)!
+        }
+        else{
+            remindDate = Calendar.current.date(bySettingHour: 21, minute: 0, second: 0, of: Date())!
+        }
+        var calendar = Calendar.current
+        calendar.timeZone = TimeZone.current
+        var remindDateComponent = DateComponents()
+        remindDateComponent.day = calendar.component(.day, from: remindDate)
+        remindDateComponent.month = calendar.component(.month, from: remindDate)
+        remindDateComponent.year = calendar.component(.year, from: remindDate)
+        remindDateComponent.hour = calendar.component(.hour, from: remindDate)
+        remindDateComponent.minute = calendar.component(.minute, from: remindDate)
+
+        let trigger = UNCalendarNotificationTrigger(dateMatching: remindDateComponent, repeats: false)
+//        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false)
+
+        let identifier = UUID().uuidString
+        task.setRemindId(remindId: identifier)
+        let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
+        center.add(request)
+    }
+    
+    private func removeNotification(task: Task){
+        UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [task.getRemindId()])
+        task.setRemindId(remindId: "")
     }
     
     /*
@@ -106,13 +178,14 @@ class TaskModificationViewController: UIViewController {
 
 }
 
+// MARK: - UITableViewDelegate, UITableViewDataSource
 extension TaskModificationViewController: UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if section == 0{
             return task.steps.count
         }
         else{
-            return 5
+            return 4
         }
     }
     
@@ -122,7 +195,8 @@ extension TaskModificationViewController: UITableViewDelegate, UITableViewDataSo
         if indexPath.section == 0 {
             stepCell.delegate = self
             stepCell.task = task
-            stepCell.createCell(task: task, index: indexPath)
+            stepCell.step = task.steps[indexPath.row]
+            stepCell.createCell(task: task, indexPath: indexPath)
             return stepCell
         }
         else{
@@ -134,48 +208,47 @@ extension TaskModificationViewController: UITableViewDelegate, UITableViewDataSo
     func numberOfSections(in tableView: UITableView) -> Int {
         return 2
     }
-    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        if section == 0{
-            return "step"
-        }
-        else {
-            return "option"
-        }
-    }
+
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.section == 1{
             switch indexPath.row{
             case 0:
-                if task.isMyDay{
-                    task.isMyDay = false
+                if task.getIsMyDay(){
+                    task.setIsMyDay(isMyDay: false)
                 }
                 else{
-                    task.isMyDay = true
+                    task.setIsMyDay(isMyDay: true)
                 }
-                optionTable.reloadData()
+            case 1:
+                if task.getRemindId() != ""{
+                    removeNotification(task: task)
+                }
+                else{
+                    requestNotification(task: task)
+                }
             case 2:
-                if task.dueDate == nil{
-                    let dueViewController = DueViewController()
-                    dueViewController.delegate = self
-                    present(dueViewController, animated: true, completion: nil)
+                if task.getDueDate() == nil{
+                    presentDueViewController()
                 }
                 else{
-                    task.dueDate = .none
+                    task.setDueDate(dueDate: nil)
                 }
-                optionTable.reloadData()
+            case 3:
+                presentNoteViewController()
             default:
                 break
             }
+            optionTable.reloadData()
         }
     }
 }
 
 extension TaskModificationViewController: TaskStepTableViewCellDelegate{
-    func taskStepTableViewCell(_ cell: TaskStepTableViewCell, didSelectDeleteAtIndexPath indexPath: IndexPath) {
-        task.deleteStep(index: indexPath.row)
+    func taskStepTableViewCell(_ cell: TaskStepTableViewCell, didSelectDeleteWithStep step: Step, didSelectDeleteAtIndexPath indexPath: IndexPath) {
+        task.deleteStep(step: step)
         optionTable.deleteRows(at: [indexPath], with: .automatic)
-        
     }
+    
     func taskStepTableViewCell(_ cell: TaskStepTableViewCell) {
         optionTable.reloadSections([0], with: .automatic)
     }
@@ -183,14 +256,29 @@ extension TaskModificationViewController: TaskStepTableViewCellDelegate{
 
 // MARK: - DueViewControllerDelegate
 extension TaskModificationViewController: DueViewControllerDelegate{
+    func dueViewController(_ viewController: UIViewController, didTapAtDoneWithOpacity opacity: Float) {
+        self.view.layer.opacity = opacity
+        self.optionTable.reloadData()
+    }
+    
     func dueViewController(_ viewController: UIViewController, didTapAtIndex index: Int, dateForIndex date: Date?){
-        task.dueDate = date
+        task.setDueDate(dueDate: date)
         delegate?.taskModificationViewController?(self, didTapAddDueDateWithDue: date, didTapAddDueDateWithIndex: index)
+        self.view.layer.opacity = 1.0
         optionTable.reloadData()
     }
 }
 
+// MARK: - NoteViewControllerDelegate
+extension TaskModificationViewController: NoteViewControllerDelegate{
+    func noteViewControllerDidTapAtDone(_ viewController: UIViewController) {
+        optionTable.reloadData()
+    }
+}
+
+
 @objc protocol TaskModificationViewControllerDelegate{
     @objc optional func taskModificationViewController(_ viewController: UIViewController, didTapAddDueDateWithDue due: Date?, didTapAddDueDateWithIndex index: Int)
-    @objc optional func taskModificationViewController(_ viewController: UIViewController)
+    @objc optional func taskModificationViewControllerDidChangeTask(_ viewController: UIViewController)
+    @objc optional func taskModificationViewController(_ viewController: UIViewController, didTapDeleteWithTask task: Task)
 }

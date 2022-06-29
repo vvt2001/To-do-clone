@@ -10,13 +10,11 @@ import UIKit
 class ModifyOptionTableViewCell: UITableViewCell {
     @IBOutlet weak var icon: UIImageView!
     @IBOutlet weak var optionLabel: UILabel!
-        
-    var optionIsOn = false
-    
+            
     func createCell(task: Task, index: Int){
         switch index{
         case 0:
-            if task.isMyDay{
+            if task.getIsMyDay(){
                 self.icon.image = UIImage(systemName: "sun.max.fill")
                 self.optionLabel.text = "Added to My Day"
             }
@@ -26,24 +24,37 @@ class ModifyOptionTableViewCell: UITableViewCell {
 
             }
         case 1:
-            self.icon.image = UIImage(systemName: "bell")
-            self.optionLabel.text = "Remind Me"
+            if task.getRemindId() != ""{
+                self.icon.image = UIImage(systemName: "bell.fill")
+                if task.getDueDate() == nil{
+                    self.optionLabel.text = "Remind Me Today"
+                }
+                else{
+                    self.optionLabel.text = "Remind Me before Due"
+                }
+            }
+            else {
+                self.icon.image = UIImage(systemName: "bell")
+                self.optionLabel.text = "Remind Me"
+            }
         case 2:
-            if task.dueDate == nil{
+            if task.getDueDate() == nil{
                 self.icon.image = UIImage(systemName: "calendar.circle")
                 self.optionLabel.text = "Add Due Date"
             }
             else{
                 self.icon.image = UIImage(systemName: "calendar.circle.fill")
-                let due = task.dueDate?.date
-                self.optionLabel.text = "Due " + due!
+                let due = task.getDueDate()!.date
+                self.optionLabel.text = "Due " + due
             }
         case 3:
-            self.icon.image = UIImage(systemName: "repeat")
-            self.optionLabel.text = "Repeat"
-        case 4:
-            self.icon.image = UIImage(systemName: "link")
-            self.optionLabel.text = "Add File"
+            self.icon.image = UIImage(systemName: "pencil")
+            if task.getNote() == ""{
+                self.optionLabel.text = "Add Note"
+            }
+            else {
+                self.optionLabel.text = task.getNote()
+            }
         default:
             break
         }

@@ -10,7 +10,7 @@ import UIKit
 class ListOptionsTableViewCell: UITableViewCell {
     @IBOutlet weak var icon: UIImageView!
     @IBOutlet weak var optionName: UILabel!
-    
+        
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

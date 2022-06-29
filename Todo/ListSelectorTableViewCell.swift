@@ -23,7 +23,7 @@ class ListSelectorTableViewCell: UITableViewCell {
     }
     
     func createCell(list: List){
-        self.listName.text = list.name
+        self.listName.text = list.getName()
         self.icon.image = UIImage(systemName: "list.bullet")
     }
 }

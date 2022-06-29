@@ -6,9 +6,10 @@
 //
 
 import Foundation
+import UIKit
 
 enum taskType: Int{
-    case myDay = 1
+    case myDay
     case Important
     case planned
     case assignToMe
@@ -23,7 +24,7 @@ enum dueType{
     case optional
 }
 
-enum themeType{
+enum themeType: Int{
     case white
     case red
     case blue

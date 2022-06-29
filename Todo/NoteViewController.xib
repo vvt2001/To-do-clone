@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="20037" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="20020"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="NoteViewController" customModule="Todo" customModuleProvider="target">
+            <connections>
+                <outlet property="doneButton" destination="uYv-O1-mtT" id="EzN-Dg-lQj"/>
+                <outlet property="navigationBar" destination="urD-eB-WBA" id="7h1-1n-mSJ"/>
+                <outlet property="noteTextView" destination="tJ9-Ca-Afg" id="n7U-Oa-edo"/>
+                <outlet property="previreButton" destination="qfQ-FM-ut0" id="e1X-TD-WSX"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="tJ9-Ca-Afg">
+                    <rect key="frame" x="0.0" y="88" width="414" height="774"/>
+                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    <color key="textColor" systemColor="labelColor"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                </textView>
+                <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="urD-eB-WBA">
+                    <rect key="frame" x="0.0" y="44" width="414" height="44"/>
+                    <items>
+                        <navigationItem title="Note" id="hb7-eq-DI1">
+                            <barButtonItem key="leftBarButtonItem" style="plain" id="qfQ-FM-ut0">
+                                <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" id="uXe-fX-QBG">
+                                    <rect key="frame" x="20" y="5" width="92" height="34.5"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <state key="normal" title="Button"/>
+                                    <buttonConfiguration key="configuration" style="plain" title="Preview"/>
+                                    <connections>
+                                        <action selector="preview" destination="-1" eventType="touchUpInside" id="7ak-u1-49O"/>
+                                    </connections>
+                                </button>
+                            </barButtonItem>
+                            <barButtonItem key="rightBarButtonItem" style="plain" id="uYv-O1-mtT">
+                                <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" id="TQ3-UK-on5">
+                                    <rect key="frame" x="302" y="5" width="92" height="34.5"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <state key="normal" title="Button"/>
+                                    <buttonConfiguration key="configuration" style="plain" title="Done"/>
+                                    <connections>
+                                        <action selector="done" destination="-1" eventType="touchUpInside" id="SHO-IR-7WV"/>
+                                    </connections>
+                                </button>
+                            </barButtonItem>
+                        </navigationItem>
+                    </items>
+                </navigationBar>
+            </subviews>
+            <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>
+            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+            <constraints>
+                <constraint firstItem="urD-eB-WBA" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" id="MrF-O0-9SG"/>
+                <constraint firstItem="tJ9-Ca-Afg" firstAttribute="bottom" secondItem="fnl-2z-Ty3" secondAttribute="bottom" id="eGd-lu-RwG"/>
+                <constraint firstItem="urD-eB-WBA" firstAttribute="trailing" secondItem="fnl-2z-Ty3" secondAttribute="trailing" id="hqx-Qh-iKS"/>
+                <constraint firstItem="tJ9-Ca-Afg" firstAttribute="top" secondItem="urD-eB-WBA" secondAttribute="bottom" id="tMc-eO-cEh"/>
+                <constraint firstItem="urD-eB-WBA" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="vAl-J7-vea"/>
+                <constraint firstItem="tJ9-Ca-Afg" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="vKu-W9-1S4"/>
+                <constraint firstItem="tJ9-Ca-Afg" firstAttribute="trailing" secondItem="fnl-2z-Ty3" secondAttribute="trailing" id="zU7-aE-dqf"/>
+            </constraints>
+            <point key="canvasLocation" x="131.8840579710145" y="49.553571428571423"/>
+        </view>
+    </objects>
+    <resources>
+        <systemColor name="labelColor">
+            <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>

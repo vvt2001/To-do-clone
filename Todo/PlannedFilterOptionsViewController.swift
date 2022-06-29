@@ -16,6 +16,7 @@ class PlannedFilterOptionsViewController: UIViewController {
     
     @IBAction func dismissView(){
         self.dismiss(animated: true)
+        delegate?.plannedFilterOptionsViewController(self, didTapAtDoneWithOpacity: 1.0)
     }
     
     override func viewDidLoad() {
@@ -65,9 +66,11 @@ extension PlannedFilterOptionsViewController: UITableViewDelegate, UITableViewDa
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         delegate?.plannedFilterOptionsViewController(self, didTapAtIndex: indexPath.row)
         self.dismiss(animated: true)
+        delegate?.plannedFilterOptionsViewController(self, didTapAtDoneWithOpacity: 1.0)
     }
 }
 
 protocol PlannedFilterOptionsViewControllerDelegate{
     func plannedFilterOptionsViewController(_ viewController: UIViewController, didTapAtIndex index: Int)
+    func plannedFilterOptionsViewController(_ viewController: UIViewController, didTapAtDoneWithOpacity  opacity: Float)
 }

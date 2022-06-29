@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="20037" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="20020"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="MenuViewController">
+            <connections>
+                <outlet property="addListField" destination="i9S-86-LdK" id="7D8-6P-ajE"/>
+                <outlet property="bottomConstraint" destination="TSc-Li-vzD" id="8Hb-II-5n2"/>
+                <outlet property="newList" destination="LCh-mz-Rzo" id="uPG-3O-zHQ"/>
+                <outlet property="selectionTable" destination="oNv-hZ-FqW" id="Amj-6R-8o5"/>
+                <outlet property="username" destination="02t-sg-Tfe" id="Vvr-9O-4uJ"/>
+                <outlet property="view" destination="E4e-wx-OP6" id="LBx-ua-Cua"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="E4e-wx-OP6">
+            <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="VlK-G2-jJC">
+                    <rect key="frame" x="0.0" y="44" width="414" height="818"/>
+                    <subviews>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Account" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="02t-sg-Tfe">
+                            <rect key="frame" x="0.0" y="0.0" width="414" height="20.5"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                            <nil key="textColor"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="oNv-hZ-FqW">
+                            <rect key="frame" x="0.0" y="28.5" width="414" height="734.5"/>
+                            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        </tableView>
+                        <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="u0e-7l-ste">
+                            <rect key="frame" x="0.0" y="771" width="414" height="47"/>
+                            <subviews>
+                                <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LCh-mz-Rzo">
+                                    <rect key="frame" x="8" y="8" width="43.5" height="31"/>
+                                    <buttonConfiguration key="configuration" style="plain" image="plus" catalog="system" title=""/>
+                                    <connections>
+                                        <action selector="addList:" destination="-1" eventType="touchUpInside" id="tJo-Eu-sIo"/>
+                                    </connections>
+                                </button>
+                                <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="New List" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="i9S-86-LdK">
+                                    <rect key="frame" x="51.5" y="8" width="354.5" height="31"/>
+                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                    <textInputTraits key="textInputTraits"/>
+                                </textField>
+                            </subviews>
+                            <edgeInsets key="layoutMargins" top="8" left="8" bottom="8" right="8"/>
+                        </stackView>
+                    </subviews>
+                </stackView>
+            </subviews>
+            <viewLayoutGuide key="safeArea" id="bgH-bT-1Yw"/>
+            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+            <constraints>
+                <constraint firstItem="VlK-G2-jJC" firstAttribute="bottom" secondItem="bgH-bT-1Yw" secondAttribute="bottom" id="TSc-Li-vzD"/>
+                <constraint firstItem="VlK-G2-jJC" firstAttribute="leading" secondItem="bgH-bT-1Yw" secondAttribute="leading" id="VfX-Hq-XCA"/>
+                <constraint firstItem="VlK-G2-jJC" firstAttribute="top" secondItem="bgH-bT-1Yw" secondAttribute="top" id="o7k-Pi-1fG"/>
+                <constraint firstItem="VlK-G2-jJC" firstAttribute="trailing" secondItem="bgH-bT-1Yw" secondAttribute="trailing" id="rPx-Pb-ObC"/>
+            </constraints>
+            <point key="canvasLocation" x="1439" y="-564"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="plus" catalog="system" width="128" height="113"/>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>

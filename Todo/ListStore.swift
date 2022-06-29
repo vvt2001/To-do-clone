@@ -12,16 +12,15 @@ class ListStore{
     func setName(name: String){
         
     }
-    @discardableResult func createList(name: String!) -> List{
-        let newList: List
-        newList = List(name: name)
-        allList.append(newList)
-        return newList
+    func createList(list: List){
+        Database.addList(newList: list)
+        allList.append(list)
     }
     
-    func deleteList(_ list: List){
-        if let index = allList.firstIndex(of: list){
+    func deleteList(list: List){
+        if let index = allList.firstIndex(where: {$0.getListID() == list.getListID()}){
             allList.remove(at: index)
         }
+        Database.deleteList(list: list)
     }
 }

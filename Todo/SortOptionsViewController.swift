@@ -20,6 +20,7 @@ class SortOptionsViewController: UIViewController {
     }
     @IBAction func dismiss(_ sender: UIButton){
         self.presentingViewController?.presentingViewController?.dismiss(animated: true, completion: nil)
+        delegate?.sortOptionsViewController(self, didTapAtDoneWithOpacity: 1.0)
     }
     
     override func viewDidLoad() {
@@ -69,4 +70,5 @@ extension SortOptionsViewController: UITableViewDelegate, UITableViewDataSource 
 
 protocol SortOptionsViewControllerDelegate{
     func sortOptionsViewController(_ viewController: UIViewController, didTapAtIndex index: Int)
+    func sortOptionsViewController(_ viewController: UIViewController, didTapAtDoneWithOpacity  opacity: Float)
 }

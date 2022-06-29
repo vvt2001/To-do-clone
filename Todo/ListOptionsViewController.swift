@@ -7,7 +7,7 @@
 
 import UIKit
 
-class ListOptionsViewController: UIViewController {
+class ListOptionsViewController: UIViewController, UIViewControllerTransitioningDelegate {
 
     @IBOutlet weak var navBar: UINavigationBar!
     @IBOutlet weak var optionsTable: UITableView!
@@ -19,6 +19,27 @@ class ListOptionsViewController: UIViewController {
     
     @IBAction func dismissView(){
         self.dismiss(animated: true)
+        delegate?.listOptionsViewController(self, didTapAtDoneWithOpacity: 1.0)
+    }
+    
+    func presentSortViewController()
+    {
+        let sortOptionsViewController = SortOptionsViewController()
+        sortOptionsViewController.transitioningDelegate = self
+        sortOptionsViewController.modalTransitionStyle = .crossDissolve
+        sortOptionsViewController.modalPresentationStyle = .custom
+        sortOptionsViewController.delegate = self
+        self.present(sortOptionsViewController, animated: true, completion: nil)
+    }
+    
+    func presentThemeSelectorViewController()
+    {
+        let themeSelectorViewController = ThemeSelectorViewController()
+        themeSelectorViewController.transitioningDelegate = self
+        themeSelectorViewController.modalTransitionStyle = .crossDissolve
+        themeSelectorViewController.modalPresentationStyle = .custom
+        themeSelectorViewController.delegate = self
+        self.present(themeSelectorViewController, animated: true, completion: nil)
     }
     
     override func viewDidLoad() {
@@ -31,7 +52,10 @@ class ListOptionsViewController: UIViewController {
         
         optionsTable.rowHeight = 60
     }
-
+    
+    func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
+        return HalfSizePresentationController(presentedViewController: presented, presenting: presentingViewController)
+    }
 
     /*
     // MARK: - Navigation
@@ -72,13 +96,9 @@ extension ListOptionsViewController: UITableViewDelegate, UITableViewDataSource 
             delegate?.listOptionsViewController(self, didTapAtEdit: true)
             self.dismiss(animated: true)
         case 1:
-            let sortOptionsViewController = SortOptionsViewController()
-            sortOptionsViewController.delegate = self
-            present(sortOptionsViewController, animated: true, completion: nil)
+            presentSortViewController()
         case 2:
-            let themeSelectorViewController = ThemeSelectorViewController()
-            themeSelectorViewController.delegate = self
-            present(themeSelectorViewController, animated: true, completion: nil)
+            presentThemeSelectorViewController()
         case 3:
             delegate?.listOptionsViewController(self, didTapAtDuplicateList: true)
             self.dismiss(animated: true)
@@ -90,6 +110,10 @@ extension ListOptionsViewController: UITableViewDelegate, UITableViewDataSource 
 
 // MARK: - SortOptionsViewControllerDelegate
 extension ListOptionsViewController: SortOptionsViewControllerDelegate{
+    func sortOptionsViewController(_ viewController: UIViewController, didTapAtDoneWithOpacity opacity: Float) {
+        delegate?.listOptionsViewController(self, didTapAtDoneWithOpacity: opacity)
+    }
+    
     func sortOptionsViewController(_ viewController: UIViewController, didTapAtIndex index: Int) {
         delegate?.listOptionsViewController(self, didTapAtImportance: true, didSelectSortOptionsWithIndex: index)
     }
@@ -101,6 +125,9 @@ extension ListOptionsViewController: ThemeSelectorViewControllerDelegate{
     func themeSelectorViewController(_ viewController: UIViewController, didSelectThemeWithType type: themeType) {
         delegate?.listOptionsViewController(self, didTapAtChangeTheme: true, didSelectThemeWithType: type)
     }
+    func themeSelectorViewController(_ viewController: UIViewController, didTapAtDoneWithOpacity  opacity: Float){
+        delegate?.listOptionsViewController(self, didTapAtDoneWithOpacity: opacity)
+    }
 }
 
 protocol ListOptionsViewControllerDelegate{
@@ -108,8 +135,7 @@ protocol ListOptionsViewControllerDelegate{
     func listOptionsViewController(_ viewController: UIViewController, didTapAtImportance bool: Bool, didSelectSortOptionsWithIndex index: Int)
     func listOptionsViewController(_ viewController: UIViewController, didTapAtChangeTheme bool: Bool, didSelectThemeWithType type: themeType)
     func listOptionsViewController(_ viewController: UIViewController, didTapAtDuplicateList bool: Bool)
-
-
+    func listOptionsViewController(_ viewController: UIViewController, didTapAtDoneWithOpacity  opacity: Float)
 }
 
 

@@ -7,10 +7,11 @@
 
 import UIKit
 
-class MyDayViewController: UIViewController, UITextFieldDelegate {
+class MyDayViewController: UIViewController, UITextFieldDelegate, UIViewControllerTransitioningDelegate {
     
     var taskStore: TaskStore!
     var listStore: ListStore!
+    var account: Account!
 
     @IBOutlet weak var taskTable: UITableView!
     @IBOutlet weak var addTaskField: UITextField!
@@ -49,6 +50,9 @@ class MyDayViewController: UIViewController, UITextFieldDelegate {
             }
             listOptionBarButtonItem.tintColor = UIColor.link
             self.navigationController?.navigationBar.tintColor = UIColor.link
+            addTaskField.attributedPlaceholder = NSAttributedString(string: "Add a Task", attributes: [NSAttributedString.Key.foregroundColor: UIColor.gray])
+            addTaskField.textColor = UIColor.black
+            self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor : UIColor.black]
         }
         else{
             for button in self.myButtons {
@@ -57,47 +61,86 @@ class MyDayViewController: UIViewController, UITextFieldDelegate {
             }
             listOptionBarButtonItem.tintColor = UIColor.white
             self.navigationController?.navigationBar.tintColor = UIColor.white
+            addTaskField.attributedPlaceholder = NSAttributedString(string: "Add a Task", attributes: [NSAttributedString.Key.foregroundColor: UIColor.white])
+            addTaskField.textColor = UIColor.white
+            self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor : UIColor.white]
         }
+    }
+    
+    private func requestNotification(task: Task){
+        let center = UNUserNotificationCenter.current()
+        
+        let content = UNMutableNotificationContent()
+        content.title = NSString.localizedUserNotificationString(forKey: "Task Management", arguments: nil)
+        content.body = NSString.localizedUserNotificationString(forKey: "'\(task.getName())' is about to meets due. Make sure to finish it.", arguments: nil)
+        content.sound = UNNotificationSound.default
+        content.badge = 1
+        
+        var remindDate = Date()
+        if let dueDate = self.dueDate {
+            remindDate = Calendar.current.date(bySettingHour: 21, minute: 0, second: 0, of: dueDate)!
+        }
+        else{
+            remindDate = Calendar.current.date(bySettingHour: 21, minute: 0, second: 0, of: Date())!
+        }
+        var calendar = Calendar.current
+        calendar.timeZone = TimeZone.current
+        var remindDateComponent = DateComponents()
+        remindDateComponent.day = calendar.component(.day, from: remindDate)
+        remindDateComponent.month = calendar.component(.month, from: remindDate)
+        remindDateComponent.year = calendar.component(.year, from: remindDate)
+        remindDateComponent.hour = calendar.component(.hour, from: remindDate)
+        remindDateComponent.minute = calendar.component(.minute, from: remindDate)
+
+        let trigger = UNCalendarNotificationTrigger(dateMatching: remindDateComponent, repeats: false)
+//        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false)
+
+        let identifier = UUID().uuidString
+        task.setRemindId(remindId: identifier)
+        let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
+        center.add(request)
     }
     
     @IBAction func addTask(_ sender: UIButton){
         if let taskName = addTaskField.text, !taskName.isEmpty{
             let newTask = Task(name: taskName, type: .tasks, isMyDay: true)
+            newTask.setAccountId(accountID: account.getID())
+
             if reminderIsOn == true{
-                
+                requestNotification(task: newTask)
             }
             if dueIsOn == true{
                 switch dueType{
                 case .today:
-                    newTask.dueDate = dueDate
+                    newTask.setDueDate(dueDate: dueDate)
                     
                 case .tomorrow:
-                    newTask.dueDate = dueDate
+                    newTask.setDueDate(dueDate: dueDate)
                     
                 case .nextWeek:
-                    newTask.dueDate = dueDate
+                    newTask.setDueDate(dueDate: dueDate)
                     
                 case .optional:
-                    newTask.dueDate = dueDate
+                    newTask.setDueDate(dueDate: dueDate)
                 default:
                     break
                 }
             }
             
             if listIsSelected == true{
-                newTask.listID = selectedListId!
+                newTask.setListId(listID: selectedListId!)
                 for list in listStore.allList{
-                    if list.id == selectedListId{
-                        _ = list.createTask(name: newTask.name, type: newTask.type, date: newTask.dueDate, isMyDay: newTask.isMyDay, listId: newTask.listID)
+                    if list.getListID() == selectedListId{
+                        list.createTask(task: newTask)
                         taskStore.allListedTask.append(newTask)
                     }
                 }
             }
             else{
-                _ = taskStore.createTask(name: newTask.name, type: newTask.type, date: newTask.dueDate, isMyDay: newTask.isMyDay)
+                taskStore.addTask(task: newTask)
             }
             var indexPath = IndexPath()
-            if let index = taskStore.myDayUnfinishedTask.lastIndex(of: newTask){
+            if let index = taskStore.myDayUnfinishedTask.lastIndex(where: {$0.getId() == newTask.getId()}){
                 indexPath = IndexPath(row: index, section: 0)
             }
             taskTable.insertRows(at: [indexPath], with: .automatic)
@@ -107,11 +150,7 @@ class MyDayViewController: UIViewController, UITextFieldDelegate {
     
     @IBAction func toggleSelectList(_ sender: UIButton){
         if listIsSelected == false{
-            let listSelectorViewController = ListSelectorViewController()
-            listSelectorViewController.delegate = self
-            listSelectorViewController.listStore = listStore
-            listSelectorViewController.isEditMode = isEditMode
-            present(listSelectorViewController, animated: true, completion: nil)
+            presentListSelectorViewController()
         }
         else{
             listIsSelected = false
@@ -124,7 +163,12 @@ class MyDayViewController: UIViewController, UITextFieldDelegate {
         if reminderIsOn == false{
             reminderIsOn = true
             reminderToggleButton.setImage(UIImage(systemName: "bell.fill"), for: .normal)
-            reminderToggleButton.setTitle("Remind me", for: .normal)
+            if dueIsOn{
+                reminderToggleButton.setTitle("Remind me before due", for: .normal)
+            }
+            else{
+                reminderToggleButton.setTitle("Remind me today", for: .normal)
+            }
         }
         else{
             reminderIsOn = false
@@ -136,15 +180,16 @@ class MyDayViewController: UIViewController, UITextFieldDelegate {
     @IBAction func toggleDue(_ sender: UIButton){
         
         if dueIsOn == false{
-            let dueViewController = DueViewController()
-            dueViewController.delegate = self
-            present(dueViewController, animated: true, completion: nil)
+            presentDueViewController()
         }
         else{
             dueIsOn = false
             dueType = .none
             dueToggleButton.setImage(UIImage(systemName: "calendar.circle"), for: .normal)
             dueToggleButton.setTitle("", for: .normal)
+            if reminderIsOn{
+                reminderToggleButton.setTitle("Remind me today", for: .normal)
+            }
         }
     }
     
@@ -157,12 +202,12 @@ class MyDayViewController: UIViewController, UITextFieldDelegate {
             isSelectedAll = true
             if taskStore.myDayUnfinishedTask.count > 0{
                 for i in 0...(taskStore.myDayUnfinishedTask.count - 1){
-                    taskStore.myDayUnfinishedTask[i].isSelected = true
+                    taskStore.myDayUnfinishedTask[i].setIsSelected(isSelected: true)
                 }
             }
             if taskStore.myDayFinishedTask.count > 0{
                 for i in 0...(taskStore.myDayFinishedTask.count - 1){
-                    taskStore.myDayFinishedTask[i].isSelected = true
+                    taskStore.myDayFinishedTask[i].setIsSelected(isSelected: true)
                 }
             }
             selectAllButton.setTitle("Clear all", for: .normal)
@@ -172,12 +217,12 @@ class MyDayViewController: UIViewController, UITextFieldDelegate {
             isSelectedAll = false
             if taskStore.myDayUnfinishedTask.count > 0{
                 for i in 0...(taskStore.myDayUnfinishedTask.count - 1){
-                    taskStore.myDayUnfinishedTask[i].isSelected = false
+                    taskStore.myDayUnfinishedTask[i].setIsSelected(isSelected: false)
                 }
             }
             if taskStore.myDayFinishedTask.count > 0{
                 for i in 0...(taskStore.myDayFinishedTask.count - 1){
-                    taskStore.myDayFinishedTask[i].isSelected = false
+                    taskStore.myDayFinishedTask[i].setIsSelected(isSelected: false)
                 }
             }
             selectAllButton.setTitle("Select all", for: .normal)
@@ -189,27 +234,21 @@ class MyDayViewController: UIViewController, UITextFieldDelegate {
     
     @IBAction func moveTask(_ sender: UIButton){
         if isSelected{
-            let listSelectorViewController = ListSelectorViewController()
-            listSelectorViewController.delegate = self
-            listSelectorViewController.isEditMode = isEditMode
-            listSelectorViewController.listStore = listStore
-            present(listSelectorViewController, animated: true, completion: nil)
+            presentListSelectorViewController()
         }
     }
     
     @IBAction func setDueDate(_ sender: UIButton){
         if isSelected{
-            let dueViewController = DueViewController()
-            dueViewController.delegate = self
-            present(dueViewController, animated: true, completion: nil)
+            presentDueViewController()
         }
     }
     
     @IBAction func deleteSelected(_ sender: UIButton){
         if isSelected{
             for tmpTask in taskStore.allTask{
-                let index = taskStore.allTask.firstIndex(where: {$0.id == tmpTask.id})
-                if tmpTask.isSelected{
+                let index = taskStore.allTask.firstIndex(where: {$0.getId() == tmpTask.getId()})
+                if tmpTask.getIsSelected(){
                     taskStore.allTask.remove(at: index!)
                 }
             }
@@ -219,10 +258,7 @@ class MyDayViewController: UIViewController, UITextFieldDelegate {
     
     @objc func listOptions(_ sender: UIBarButtonItem){
         if isEditMode == false{
-            let listOptionsViewController = ListOptionsViewController()
-            listOptionsViewController.isDuplicatable = false
-            listOptionsViewController.delegate = self
-            present(listOptionsViewController, animated: true, completion: nil)
+            presentListOptionsViewController()
         }
         else{
             self.addTaskOptions.isHidden = false
@@ -235,353 +271,7 @@ class MyDayViewController: UIViewController, UITextFieldDelegate {
         }
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        // Do any additional setup after loading the view.
-        listOptionBarButtonItem = UIBarButtonItem(title: "", style: .done, target: self, action: #selector(listOptions))
-        listOptionBarButtonItem.image = UIImage(systemName: "ellipsis")
-        
-        self.navigationItem.rightBarButtonItem  = listOptionBarButtonItem
-        
-        taskTable.delegate = self
-        taskTable.dataSource = self
-        self.taskTable.register(UINib(nibName: "TaskTableViewCell", bundle: Bundle.main), forCellReuseIdentifier: "TaskTableViewCell")
-        
-        taskTable.rowHeight = 60
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        changeButtonColor()
-        self.taskTable.reloadSections([0, 1], with: .automatic)
-    }
-    
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        self.view.endEditing(true)
-        return false
-    }
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
-}
-
-// MARK: - UITableViewDelegate, UITableViewDataSource
-extension MyDayViewController: UITableViewDelegate, UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if section == 0{
-            return taskStore.myDayUnfinishedTask.count
-        }
-        else{
-            return taskStore.myDayFinishedTask.count
-        }
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "TaskTableViewCell", for: indexPath) as! TaskTableViewCell
-        cell.delegate = self
-        cell.isEditMode = isEditMode
-        cell.listStore = listStore
-        
-        if indexPath.section == 0{
-            cell.task = taskStore.myDayUnfinishedTask[indexPath.row]
-            cell.createCell(name: taskStore.myDayUnfinishedTask[indexPath.row].name)
-            
-        }
-        else{
-            cell.task = taskStore.myDayFinishedTask[indexPath.row]
-            cell.createCell(name: taskStore.myDayFinishedTask[indexPath.row].name)
-            
-        }
-        return cell
-    }
-    
-    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        if section == 0{
-            return "My day"
-        }
-        else{
-            if taskStore.myDayFinishedTask.count != 0{
-                return "Finished"
-            }
-        }
-        return ""
-    }
-    
-    func numberOfSections(in tableView: UITableView) -> Int {
-        return 2
-    }
-    
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            let task: Task
-            if indexPath.section == 0{
-                task = taskStore.myDayUnfinishedTask[indexPath.row]
-            }
-            else{
-                task = taskStore.myDayFinishedTask[indexPath.row]
-            }
-            taskStore.deleteTask(task)
-            tableView.deleteRows(at: [indexPath], with: .automatic)
-        }
-    }
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let taskModificationViewController = TaskModificationViewController(nibName: "TaskModificationViewController", bundle: .main)
-        let task: Task
-        if indexPath.section == 0{
-            task = taskStore.myDayUnfinishedTask[indexPath.row]
-        }
-        else {
-            task = taskStore.myDayFinishedTask[indexPath.row]
-        }
-        taskModificationViewController.task = task
-        taskModificationViewController.delegate = self
-        navigationController?.pushViewController(taskModificationViewController, animated: true)
-    }
-}
-
-// MARK: - TaskTableViewCellDelegate
-extension MyDayViewController: TaskTableViewCellDelegate{
-    func taskTableViewCell(_ cell: TaskTableViewCell, didTapFinishButtonWithTask task: Task) {
-        let state = task.isFinished
-        if state == false{
-            task.isFinished = true
-        }
-        else{
-            task.isFinished = false
-        }
-        taskTable.reloadSections([0, 1], with: .automatic)
-    }
-    
-    func taskTableViewCell(_ cell: TaskTableViewCell, didTapImportantButtonWithTask task: Task) {
-        let state = task.isImportant
-        if state == false{
-            for tmpTask in taskStore.allTask {
-                if tmpTask.id == task.id{
-                    task.isImportant = true
-                }
-            }
-        }
-        else{
-            for tmpTask in taskStore.allTask {
-                if tmpTask.id == task.id{
-                    task.isImportant = false
-                }
-            }
-        }
-        taskTable.reloadSections([0, 1], with: .automatic)
-    }
-    
-    func taskTableViewCell(_ cell: TaskTableViewCell, didTapCheckButtonWithTask task: Task) {
-        for tmpTask in taskStore.allTask{
-            if tmpTask.id == task.id{
-                if task.isSelected == false{
-                    task.isSelected = true
-                }
-                else{
-                    isSelectedAll = false
-                    task.isSelected = false
-                }
-            }
-        }
-        isSelected = false
-        selectedArr = []
-        for tmpTask in taskStore.myDayUnfinishedTask{
-            if tmpTask.isSelected{
-                isSelected = true
-                selectedArr?.append(tmpTask)
-            }
-        }
-        for tmpTask in taskStore.myDayFinishedTask{
-            if tmpTask.isSelected{
-                isSelected = true
-                selectedArr?.append(tmpTask)
-            }
-        }
-        if selectedArr?.count == taskStore.myDayFinishedTask.count + taskStore.myDayUnfinishedTask.count{
-            isSelectedAll = true
-            selectAllButton.setTitle("Clear all", for: .normal)
-            let attributeText = NSMutableAttributedString(string: selectAllButton.title(for: .normal) ?? "", attributes: [.font: UIFont.systemFont(ofSize: 12.0)])
-            selectAllButton.setAttributedTitle(attributeText, for: .normal)
-        }
-        else{
-            isSelectedAll = false
-            selectAllButton.setTitle("Select all", for: .normal)
-            let attributeText = NSMutableAttributedString(string: selectAllButton.title(for: .normal) ?? "", attributes: [.font: UIFont.systemFont(ofSize: 12.0)])
-            selectAllButton.setAttributedTitle(attributeText, for: .normal)
-        }
-        taskTable.reloadSections([0, 1], with: .automatic)
-    }
-}
-
-// MARK: - DueViewControllerDelegate
-extension MyDayViewController: DueViewControllerDelegate{
-    func dueViewController(_ viewController: UIViewController, didTapAtIndex index: Int, dateForIndex date: Date?){
-        var due = String()
-        let cell = DueTableViewCell()
-        let nextWeekDate = cell.getNextWeek()
-        dueDate = date
-        
-        switch index{
-        case 0:
-            dueType = .today
-            due = " Today"
-        case 1:
-            dueType = .tomorrow
-            due = " Tomorrow"
-        case 2:
-            dueType = .nextWeek
-            due = " " + nextWeekDate!
-        case 3:
-            if date != nil{
-                dueType = .optional
-                due = " " + dueDate!.date
-            }
-        default:
-            break
-        }
-        
-        if isEditMode == false{
-            if date != nil{
-                dueIsOn = true
-                dueToggleButton.setTitle("Due" + due, for: .normal)
-                dueToggleButton.setImage(UIImage(systemName: "calendar.circle.fill"), for: .normal)
-            }
-        }
-        else{
-            for tmpTask in taskStore.allTask{
-                if tmpTask.isSelected{
-                    tmpTask.dueDate = date
-                    tmpTask.isSelected = false
-                }
-            }
-            taskTable.reloadSections([0, 1], with: .automatic)
-        }
-    }
-}
-
-// MARK: - TaskModificationViewControllerDelegate
-extension MyDayViewController: TaskModificationViewControllerDelegate{
-    func taskModificationViewController(_ viewController: UIViewController) {
-        taskTable.reloadSections([0, 1], with: .automatic)
-    }
-}
-
-// MARK: - ListSelectorViewControllerDelegate
-extension MyDayViewController: ListSelectorViewControllerDelegate{
-    func listSelectorViewController(_ viewController: UIViewController, selectForAddTask bool: Bool, listForIndex list: List?) {
-        selectedListId = list?.id
-        if selectedListId != nil{
-            listIsSelected = true
-            selectListToggleButton.setImage(UIImage(systemName: "checkmark.icloud.fill"), for: .normal)
-            selectListToggleButton.setTitle(list?.name, for: .normal)
-        }
-    }
-    func listSelectorViewController(_ viewController: UIViewController, selectForListOptions bool: Bool, listForIndex list: List?) {
-        for tmpList in listStore.allList{
-            if tmpList.id == list?.id{
-                
-                for tmpTask in taskStore.myDayFinishedTask{
-                    if tmpTask.isSelected{
-                        let currentListId = tmpTask.listID
-                        if currentListId != "" {
-                            let listIndex = listStore.allList.firstIndex(where: {$0.id == currentListId})
-                            let index = listStore.allList[listIndex!].allTask.firstIndex(where: {$0.id == tmpTask.id})
-                            tmpTask.listID = list!.id
-                            tmpList.allTask.append(tmpTask)
-                            listStore.allList[listIndex!].allTask.remove(at: index!)
-                        }
-                        else{
-                            let index = taskStore.allTask.firstIndex(where: {$0.id == tmpTask.id})
-                            if tmpTask.isSelected{
-                                tmpTask.listID = list!.id
-                                tmpList.allTask.append(tmpTask)
-                                taskStore.allListedTask.append(tmpTask)
-                                taskStore.allTask.remove(at: index!)
-                            }
-                        }
-                    }
-                }
-                
-                for tmpTask in taskStore.myDayUnfinishedTask{
-                    if tmpTask.isSelected{
-                        let currentListId = tmpTask.listID
-                        if currentListId != "" {
-                            let listIndex = listStore.allList.firstIndex(where: {$0.id == currentListId})
-                            let index = listStore.allList[listIndex!].allTask.firstIndex(where: {$0.id == tmpTask.id})
-                            tmpTask.listID = list!.id
-                            tmpList.allTask.append(tmpTask)
-                            listStore.allList[listIndex!].allTask.remove(at: index!)
-                        }
-                        else{
-                            let index = taskStore.allTask.firstIndex(where: {$0.id == tmpTask.id})
-                            if tmpTask.isSelected{
-                                tmpTask.listID = list!.id
-                                tmpList.allTask.append(tmpTask)
-                                taskStore.allListedTask.append(tmpTask)
-                                taskStore.allTask.remove(at: index!)
-                            }
-                        }
-                    }
-                }
-                
-            }
-        }
-        taskTable.reloadSections([0,1], with: .automatic)
-    }
-}
-
-// MARK: - ListOptionsViewControllerDelegate
-extension MyDayViewController: ListOptionsViewControllerDelegate{
-    func listOptionsViewController(_ viewController: UIViewController, didTapAtEdit bool: Bool) {
-        self.addTaskOptions.isHidden = true
-        self.addTaskFunction.isHidden = true
-        self.editOptions.isHidden = false
-        isEditMode = true
-        isSelectedAll = false
-        listOptionBarButtonItem.title = "Cancel"
-        listOptionBarButtonItem.image = .none
-        if taskStore.unfinishedTask.count > 0{
-            for i in 0...(taskStore.unfinishedTask.count - 1){
-                taskStore.unfinishedTask[i].isSelected = false
-            }
-        }
-        if taskStore.finishedTask.count > 0{
-            for i in 0...(taskStore.finishedTask.count - 1){
-                taskStore.finishedTask[i].isSelected = false
-            }
-        }
-        selectAllButton.setTitle("Select all", for: .normal)
-        let attributeText = NSMutableAttributedString(string: selectAllButton.title(for: .normal) ?? "", attributes: [.font: UIFont.systemFont(ofSize: 12.0)])
-        selectAllButton.setAttributedTitle(attributeText, for: .normal)
-
-        taskTable.reloadSections([0,1], with: .automatic)
-    }
-    
-    func listOptionsViewController(_ viewController: UIViewController, didTapAtImportance bool: Bool, didSelectSortOptionsWithIndex index: Int) {
-        switch index{
-        case 0:
-            taskStore.allTask = taskStore.allTask.sorted(by: {$0.isImportant && !$1.isImportant})
-        case 1:
-            taskStore.allTask = taskStore.allTask.sorted(by: {$0.name < $1.name})
-        case 2:
-            taskStore.allTask = taskStore.allTask.sorted(by: {$0.dueDate ?? Date() < $1.dueDate ?? Date()})
-        case 3:
-            taskStore.allTask = taskStore.allTask.sorted(by: {$0.isMyDay && !$1.isMyDay})
-        default:
-            break
-        }
-        taskTable.reloadSections([0,1], with: .automatic)
-    }
-    
-    func listOptionsViewController(_ viewController: UIViewController, didTapAtChangeTheme bool: Bool, didSelectThemeWithType type: themeType) {
+    private func changeTheme(type: themeType){
         if type == .white{
             isThemeWhite = true
         }
@@ -612,11 +302,470 @@ extension MyDayViewController: ListOptionsViewControllerDelegate{
             taskTable.backgroundColor = UIColor.systemTeal
         }
         changeButtonColor()
+        taskTable.reloadData()
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        // Do any additional setup after loading the view.
+        listOptionBarButtonItem = UIBarButtonItem(title: "", style: .done, target: self, action: #selector(listOptions))
+        listOptionBarButtonItem.image = UIImage(systemName: "ellipsis")
+        
+        self.navigationItem.rightBarButtonItem  = listOptionBarButtonItem
+        
+        taskTable.delegate = self
+        taskTable.dataSource = self
+        self.taskTable.register(UINib(nibName: "TaskTableViewCell", bundle: Bundle.main), forCellReuseIdentifier: "TaskTableViewCell")
+        
+        taskTable.rowHeight = 60
+        
+        self.title = "My Day"
+        let tapGesture = UITapGestureRecognizer(target: view, action: #selector(UIView.endEditing))
+        view.addGestureRecognizer(tapGesture)
+        tapGesture.cancelsTouchesInView = false
+        
+        changeTheme(type: account.getCurrentThemeType())
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(MyDayViewController.keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(MyDayViewController.keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        changeTheme(type: account.getCurrentThemeType())
+        self.taskTable.reloadSections([0, 1], with: .automatic)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor : UIColor.black]
+        self.navigationController?.navigationBar.tintColor = UIColor.link
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        self.view.endEditing(true)
+        return false
+    }
+    
+    func presentDueViewController(){
+        let dueViewController = DueViewController()
+        dueViewController.transitioningDelegate = self
+        dueViewController.modalTransitionStyle = .coverVertical
+        dueViewController.modalPresentationStyle = .custom
+        dueViewController.delegate = self
+        self.view.layer.opacity = 0.5
+        self.present(dueViewController, animated: true, completion: nil)
+    }
+    
+    func presentListOptionsViewController(){
+        let listOptionsViewController = ListOptionsViewController()
+        listOptionsViewController.modalTransitionStyle = .coverVertical
+        listOptionsViewController.modalPresentationStyle = .custom
+        listOptionsViewController.transitioningDelegate = self
+        listOptionsViewController.delegate = self
+        listOptionsViewController.isDuplicatable = false
+        self.present(listOptionsViewController, animated: true, completion: nil)
+        self.view.layer.opacity = 0.5
+    }
+    
+    func presentListSelectorViewController(){
+        let listSelectorViewController = ListSelectorViewController()
+        listSelectorViewController.modalTransitionStyle = .coverVertical
+        listSelectorViewController.modalPresentationStyle = .custom
+        listSelectorViewController.transitioningDelegate = self
+        listSelectorViewController.isEditMode = isEditMode
+        listSelectorViewController.listStore = listStore
+        listSelectorViewController.delegate = self
+        self.present(listSelectorViewController, animated: true, completion: nil)
+        self.view.layer.opacity = 0.5
+    }
+    
+    func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
+        return HalfSizePresentationController(presentedViewController: presented, presenting: presentingViewController)
+    }
+
+    @IBOutlet weak var bottomConstraint: NSLayoutConstraint!
+    var isMoved: Bool = false
+    @objc func keyboardWillShow(notification: NSNotification) {
+        if(isMoved)
+        {
+            return
+        }
+        guard let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else {
+           // if keyboard size is not available for some reason, dont do anything
+           return
+        }
+
+      // move the root view up by the distance of keyboard height
+        bottomConstraint.constant -= (keyboardSize.height - 30)
+        isMoved =  true
+    }
+    @objc func keyboardWillHide(notification: NSNotification) {
+      // move back the root view origin
+        bottomConstraint.constant = 0
+        isMoved = false
+    }
+    /*
+    // MARK: - Navigation
+
+    // In a storyboard-based application, you will often want to do a little preparation before navigation
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        // Get the new view controller using segue.destination.
+        // Pass the selected object to the new view controller.
+    }
+    */
+
+}
+
+// MARK: - UITableViewDelegate, UITableViewDataSource
+extension MyDayViewController: UITableViewDelegate, UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if section == 0{
+            return taskStore.myDayUnfinishedTask.count
+        }
+        else{
+            return taskStore.myDayFinishedTask.count
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "TaskTableViewCell", for: indexPath) as! TaskTableViewCell
+        cell.delegate = self
+        cell.isEditMode = isEditMode
+        cell.listStore = listStore
+        cell.selectionStyle = .none
+        
+        if indexPath.section == 0{
+            cell.task = taskStore.myDayUnfinishedTask[indexPath.row]
+            cell.createCell(name: taskStore.myDayUnfinishedTask[indexPath.row].getName())
+            
+        }
+        else{
+            cell.task = taskStore.myDayFinishedTask[indexPath.row]
+            cell.createCell(name: taskStore.myDayFinishedTask[indexPath.row].getName())
+            
+        }
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        if section == 1{
+            if taskStore.myDayFinishedTask.count != 0{
+                return "Finished"
+            }
+        }
+        return ""
+    }
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 2
+    }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            let task: Task
+            if indexPath.section == 0{
+                task = taskStore.myDayUnfinishedTask[indexPath.row]
+            }
+            else{
+                task = taskStore.myDayFinishedTask[indexPath.row]
+            }
+            taskStore.deleteTask(task: task)
+            tableView.deleteRows(at: [indexPath], with: .automatic)
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let taskModificationViewController = TaskModificationViewController(nibName: "TaskModificationViewController", bundle: .main)
+        let task: Task
+        if indexPath.section == 0{
+            task = taskStore.myDayUnfinishedTask[indexPath.row]
+        }
+        else {
+            task = taskStore.myDayFinishedTask[indexPath.row]
+        }
+        taskModificationViewController.task = task
+        taskModificationViewController.delegate = self
+        navigationController?.pushViewController(taskModificationViewController, animated: true)
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
+        let header = view as! UITableViewHeaderFooterView
+        if isThemeWhite{
+            header.textLabel?.textColor = UIColor.gray
+        }
+        else{
+            header.textLabel?.textColor = UIColor.white
+        }
+    }
+}
+
+// MARK: - TaskTableViewCellDelegate
+extension MyDayViewController: TaskTableViewCellDelegate{
+    func taskTableViewCell(_ cell: TaskTableViewCell, didTapFinishButtonWithTask task: Task) {
+        let state = task.getIsFinished()
+        if state == false{
+            task.setIsFinished(isFinished: true)
+        }
+        else{
+            task.setIsFinished(isFinished: false)
+        }
+        taskTable.reloadSections([0, 1], with: .automatic)
+    }
+    
+    func taskTableViewCell(_ cell: TaskTableViewCell, didTapImportantButtonWithTask task: Task) {
+        let state = task.getIsImportant()
+        if state == false{
+            for tmpTask in taskStore.allTask {
+                if tmpTask.getId() == task.getId(){
+                    task.setIsImportant(isImportant: true)
+                }
+            }
+        }
+        else{
+            for tmpTask in taskStore.allTask {
+                if tmpTask.getId() == task.getId(){
+                    task.setIsImportant(isImportant: false)
+                }
+            }
+        }
+        taskTable.reloadSections([0, 1], with: .automatic)
+    }
+    
+    func taskTableViewCell(_ cell: TaskTableViewCell, didTapCheckButtonWithTask task: Task) {
+        for tmpTask in taskStore.allTask{
+            if tmpTask.getId() == task.getId(){
+                if task.getIsSelected() == false{
+                    task.setIsSelected(isSelected: true)
+                }
+                else{
+                    isSelectedAll = false
+                    task.setIsSelected(isSelected: false)
+                }
+            }
+        }
+        isSelected = false
+        selectedArr = []
+        for tmpTask in taskStore.myDayUnfinishedTask{
+            if tmpTask.getIsSelected(){
+                isSelected = true
+                selectedArr?.append(tmpTask)
+            }
+        }
+        for tmpTask in taskStore.myDayFinishedTask{
+            if tmpTask.getIsSelected(){
+                isSelected = true
+                selectedArr?.append(tmpTask)
+            }
+        }
+        if selectedArr?.count == taskStore.myDayFinishedTask.count + taskStore.myDayUnfinishedTask.count{
+            isSelectedAll = true
+            selectAllButton.setTitle("Clear all", for: .normal)
+            let attributeText = NSMutableAttributedString(string: selectAllButton.title(for: .normal) ?? "", attributes: [.font: UIFont.systemFont(ofSize: 12.0)])
+            selectAllButton.setAttributedTitle(attributeText, for: .normal)
+        }
+        else{
+            isSelectedAll = false
+            selectAllButton.setTitle("Select all", for: .normal)
+            let attributeText = NSMutableAttributedString(string: selectAllButton.title(for: .normal) ?? "", attributes: [.font: UIFont.systemFont(ofSize: 12.0)])
+            selectAllButton.setAttributedTitle(attributeText, for: .normal)
+        }
+        taskTable.reloadSections([0, 1], with: .automatic)
+    }
+}
+
+// MARK: - DueViewControllerDelegate
+extension MyDayViewController: DueViewControllerDelegate{
+    func dueViewController(_ viewController: UIViewController, didTapAtDoneWithOpacity opacity: Float) {
+        self.view.layer.opacity = opacity
+        self.taskTable.reloadData()
+    }
+    
+    func dueViewController(_ viewController: UIViewController, didTapAtIndex index: Int, dateForIndex date: Date?){
+        self.view.layer.opacity = 1.0
+        var due = String()
+        let cell = DueTableViewCell()
+        let nextWeekDate = cell.getNextWeek()
+        dueDate = date
+        
+        switch index{
+        case 0:
+            dueType = .today
+            due = " Today"
+        case 1:
+            dueType = .tomorrow
+            due = " Tomorrow"
+        case 2:
+            dueType = .nextWeek
+            due = " " + nextWeekDate!
+        case 3:
+            if date != nil{
+                dueType = .optional
+                due = " " + dueDate!.date
+            }
+        default:
+            break
+        }
+        
+        if isEditMode == false{
+            if date != nil{
+                dueIsOn = true
+                dueToggleButton.setTitle("Due" + due, for: .normal)
+                dueToggleButton.setImage(UIImage(systemName: "calendar.circle.fill"), for: .normal)
+                if reminderIsOn{
+                    reminderToggleButton.setTitle("Remind me before due", for: .normal)
+                }
+            }
+        }
+        else{
+            for tmpTask in taskStore.allTask{
+                if tmpTask.getIsSelected(){
+                    tmpTask.setDueDate(dueDate: date)
+                    tmpTask.setIsSelected(isSelected: false)
+                }
+            }
+            taskTable.reloadSections([0, 1], with: .automatic)
+        }
+    }
+}
+
+// MARK: - TaskModificationViewControllerDelegate
+extension MyDayViewController: TaskModificationViewControllerDelegate{
+    func taskModificationViewControllerDidChangeTask(_ viewController: UIViewController) {
+        taskTable.reloadSections([0, 1], with: .automatic)
+    }
+    func taskModificationViewController(_ viewController: UIViewController, didTapDeleteWithTask task: Task) {
+        taskStore.deleteTask(task: task)
+        taskTable.reloadSections([0, 1], with: .automatic)
+    }
+}
+
+// MARK: - ListSelectorViewControllerDelegate
+extension MyDayViewController: ListSelectorViewControllerDelegate{
+    func listSelectorViewController(_ viewController: UIViewController, didTapAtDoneWithOpacity opacity: Float) {
+        self.view.layer.opacity = opacity
+        self.taskTable.reloadData()
+    }
+    
+    func listSelectorViewController(_ viewController: UIViewController, selectForAddTask bool: Bool, listForIndex list: List?) {
+        selectedListId = list?.getListID()
+        if selectedListId != nil{
+            listIsSelected = true
+            selectListToggleButton.setImage(UIImage(systemName: "checkmark.icloud.fill"), for: .normal)
+            selectListToggleButton.setTitle(list?.getName(), for: .normal)
+        }
+    }
+    func listSelectorViewController(_ viewController: UIViewController, selectForListOptions bool: Bool, listForIndex list: List?) {
+        for tmpList in listStore.allList{
+            if tmpList.getListID() == list?.getListID(){
+                
+                for tmpTask in taskStore.myDayFinishedTask{
+                    if tmpTask.getIsSelected(){
+                        let currentListId = tmpTask.getListId()
+                        if currentListId != "" {
+                            let listIndex = listStore.allList.firstIndex(where: {$0.getListID() == currentListId})
+                            let index = listStore.allList[listIndex!].allTask.firstIndex(where: {$0.getId() == tmpTask.getId()})
+                            tmpTask.setListId(listID: list!.getListID())
+                            tmpList.allTask.append(tmpTask)
+                            listStore.allList[listIndex!].allTask.remove(at: index!)
+                        }
+                        else{
+                            let index = taskStore.allTask.firstIndex(where: {$0.getId() == tmpTask.getId()})
+                            if tmpTask.getIsSelected(){
+                                tmpTask.setListId(listID: list!.getListID())
+                                tmpList.allTask.append(tmpTask)
+                                taskStore.allListedTask.append(tmpTask)
+                                taskStore.allTask.remove(at: index!)
+                            }
+                        }
+                    }
+                }
+                
+                for tmpTask in taskStore.myDayUnfinishedTask{
+                    if tmpTask.getIsSelected(){
+                        let currentListId = tmpTask.getListId()
+                        if currentListId != "" {
+                            let listIndex = listStore.allList.firstIndex(where: {$0.getListID() == currentListId})
+                            let index = listStore.allList[listIndex!].allTask.firstIndex(where: {$0.getId() == tmpTask.getId()})
+                            tmpTask.setListId(listID: list!.getListID())
+                            tmpList.allTask.append(tmpTask)
+                            listStore.allList[listIndex!].allTask.remove(at: index!)
+                        }
+                        else{
+                            let index = taskStore.allTask.firstIndex(where: {$0.getId() == tmpTask.getId()})
+                            if tmpTask.getIsSelected(){
+                                tmpTask.setListId(listID: list!.getListID())
+                                tmpList.allTask.append(tmpTask)
+                                taskStore.allListedTask.append(tmpTask)
+                                taskStore.allTask.remove(at: index!)
+                            }
+                        }
+                    }
+                }
+                
+            }
+        }
+        taskTable.reloadSections([0,1], with: .automatic)
+    }
+}
+
+// MARK: - ListOptionsViewControllerDelegate
+extension MyDayViewController: ListOptionsViewControllerDelegate{
+    func listOptionsViewController(_ viewController: UIViewController, didTapAtEdit bool: Bool) {
+        self.addTaskOptions.isHidden = true
+        self.addTaskFunction.isHidden = true
+        self.editOptions.isHidden = false
+        isEditMode = true
+        isSelectedAll = false
+        listOptionBarButtonItem.title = "Cancel"
+        listOptionBarButtonItem.image = .none
+        if taskStore.unfinishedTask.count > 0{
+            for i in 0...(taskStore.unfinishedTask.count - 1){
+                taskStore.unfinishedTask[i].setIsSelected(isSelected: false)
+            }
+        }
+        if taskStore.finishedTask.count > 0{
+            for i in 0...(taskStore.finishedTask.count - 1){
+                taskStore.finishedTask[i].setIsSelected(isSelected: false)
+            }
+        }
+        selectAllButton.setTitle("Select all", for: .normal)
+        let attributeText = NSMutableAttributedString(string: selectAllButton.title(for: .normal) ?? "", attributes: [.font: UIFont.systemFont(ofSize: 12.0)])
+        selectAllButton.setAttributedTitle(attributeText, for: .normal)
+
+        self.view.layer.opacity = 1.0
+        taskTable.reloadSections([0,1], with: .automatic)
+    }
+    
+    func listOptionsViewController(_ viewController: UIViewController, didTapAtImportance bool: Bool, didSelectSortOptionsWithIndex index: Int) {
+        switch index{
+        case 0:
+            taskStore.allTask = taskStore.allTask.sorted(by: {$0.getIsImportant() && !$1.getIsImportant()})
+        case 1:
+            taskStore.allTask = taskStore.allTask.sorted(by: {$0.getName() < $1.getName()})
+        case 2:
+            taskStore.allTask = taskStore.allTask.sorted(by: {$0.getDueDate()! < $1.getDueDate()!})
+        case 3:
+            taskStore.allTask = taskStore.allTask.sorted(by: {$0.getIsMyDay() && !$1.getIsMyDay()})
+        default:
+            break
+        }
+        self.view.layer.opacity = 1.0
+        taskTable.reloadSections([0,1], with: .automatic)
+    }
+    
+    func listOptionsViewController(_ viewController: UIViewController, didTapAtChangeTheme bool: Bool, didSelectThemeWithType type: themeType) {
+        account.setCurrentThemeType(currentThemeType: type)
+        changeTheme(type: type)
+        self.view.layer.opacity = 1.0
     }
     
     func listOptionsViewController(_ viewController: UIViewController, didTapAtDuplicateList bool: Bool) {
 
     }
     
+    func listOptionsViewController(_ viewController: UIViewController, didTapAtDoneWithOpacity opacity: Float) {
+        self.view.layer.opacity = opacity
+        self.taskTable.reloadData()
+    }
     
 }

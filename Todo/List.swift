@@ -6,16 +6,50 @@
 //
 
 import Foundation
+import RealmSwift
 
-class List: Equatable{
-    var name: String
+class List: Object{
+
+    
+    @objc dynamic private var name: String = ""
+    @objc dynamic private var id = NSUUID().uuidString
+    @objc dynamic private var accountID = ""
+
     var allTask = [Task]()
-    var id = NSUUID().uuidString
+
+    override init() {
+    }
+    
+    func getName() -> String
+    {
+        return self.name
+    }
+    func setName(newName: String)
+    {
+        try! Database.realm.write(
+            {
+                self.name = newName
+            }
+        )
+    }
+    func getListID() -> String
+    {
+        return self.id
+    }
+    func getAccountID() -> String{
+        return self.accountID
+    }
+    
+    func setAccountId(accountID: String){
+        try! Database.realm.write({
+            self.accountID = accountID
+        })
+    }
     
     var unfinishedTask: [Task]{
         var unfinished = [Task]()
         for task in allTask{
-            if task.isFinished == false{
+            if task.getIsFinished() == false{
                 unfinished.append(task)
             }
         }
@@ -24,7 +58,7 @@ class List: Equatable{
     var finishedTask: [Task]{
         var finished = [Task]()
         for task in allTask{
-            if task.isFinished == true{
+            if task.getIsFinished() == true{
                 finished.append(task)
             }
         }
@@ -33,7 +67,7 @@ class List: Equatable{
     var importantTask: [Task]{
         var important = [Task]()
         for task in allTask{
-            if task.isImportant == true{
+            if task.getIsImportant() == true{
                 important.append(task)
             }
         }
@@ -50,34 +84,13 @@ class List: Equatable{
 //        allTask.append(newTask)
 //        return newTask
 //    }
-    @discardableResult func createTask(name: String!, type: taskType, date: Date?, isMyDay: Bool, listId: String) -> Task{
-        let newTask: Task
-        newTask = Task(name: name, type: type, isMyDay: isMyDay)
-        newTask.dueDate = date
-        newTask.listID = listId
-        if newTask.type == .Important{
-            newTask.isImportant = true
-        }
-        allTask.append(newTask)
-        return newTask
+    func createTask(task: Task){
+        Database.addTask(newTask: task)
+        allTask.append(task)
     }
-    func deleteTask(_ task: Task){
-        let index = findID(task)
-        allTask.remove(at: index)
-    }
-    
-    func findID(_ task: Task) -> Int{
-        var foundIndex = 999
-        for (index, tmpTask) in allTask.enumerated(){
-            if tmpTask.id == task.id{
-                foundIndex = index
-            }
-        }
-        return foundIndex
-    }
-    
-    static func ==(lhs: List, rhs: List) -> Bool {
-        return lhs.name == rhs.name
-            && lhs.name == rhs.name
+    func deleteTask(task: Task){
+        let index = allTask.firstIndex(where: {$0.getId() == task.getId()})
+        allTask.remove(at: index!)
+        Database.deleteTask(task: task)
     }
 }
