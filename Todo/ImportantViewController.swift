@@ -425,6 +425,9 @@ extension ImportantViewController: UITableViewDelegate, UITableViewDataSource {
         if editingStyle == .delete {
             let task: Task
             task = taskStore.importantTask[indexPath.row]
+            for step in task.steps{
+                task.deleteStep(step: step)
+            }
             taskStore.deleteTask(task: task)
             tableView.deleteRows(at: [indexPath], with: .automatic)
         }
@@ -556,6 +559,9 @@ extension ImportantViewController: TaskModificationViewControllerDelegate{
         taskTable.reloadSections([0], with: .automatic)
     }
     func taskModificationViewController(_ viewController: UIViewController, didTapDeleteWithTask task: Task) {
+        for step in task.steps{
+            task.deleteStep(step: step)
+        }
         taskStore.deleteTask(task: task)
         taskTable.reloadSections([0], with: .automatic)
     }

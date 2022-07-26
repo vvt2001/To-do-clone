@@ -243,6 +243,14 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete{
             let list = listStore.allList[indexPath.row]
+            for task in taskStore.allListedTask{
+                if task.getListId() == list.getListID(){
+                    if let index = taskStore.allListedTask.firstIndex(where: {$0.getId() == task.getId()}){
+                        taskStore.allListedTask.remove(at: index)
+                    }
+                    list.deleteTask(task: task)
+                }
+            }
             listStore.deleteList(list: list)
             tableView.deleteRows(at: [indexPath], with: .automatic)
         }

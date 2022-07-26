@@ -463,6 +463,9 @@ extension ListViewController: UITableViewDelegate, UITableViewDataSource{
                 task = list.finishedTask[indexPath.row]
             }
             let index = taskStore.allListedTask.firstIndex(where: {$0.getId() == task.getId()})
+            for step in task.steps{
+                task.deleteStep(step: step)
+            }
             taskStore.allListedTask.remove(at: index!)
             list.deleteTask(task: task)
             tableView.deleteRows(at: [indexPath], with: .automatic)
@@ -627,7 +630,12 @@ extension ListViewController: TaskModificationViewControllerDelegate{
         taskTable.reloadSections([0, 1], with: .automatic)
     }
     func taskModificationViewController(_ viewController: UIViewController, didTapDeleteWithTask task: Task) {
-        taskStore.deleteTask(task: task)
+        for step in task.steps{
+            task.deleteStep(step: step)
+        }
+        let index = taskStore.allListedTask.firstIndex(where: {$0.getId() == task.getId()})
+        taskStore.allListedTask.remove(at: index!)
+        list.deleteTask(task: task)
         taskTable.reloadSections([0, 1], with: .automatic)
     }
 }

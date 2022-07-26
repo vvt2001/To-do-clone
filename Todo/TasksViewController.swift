@@ -471,6 +471,11 @@ extension TasksViewController: UITableViewDelegate, UITableViewDataSource {
             else{
                 task = taskStore.finishedTask[indexPath.row]
             }
+            
+            for step in task.steps{
+                task.deleteStep(step: step)
+            }
+            
             taskStore.deleteTask(task: task)
             tableView.deleteRows(at: [indexPath], with: .automatic)
         }
@@ -634,6 +639,9 @@ extension TasksViewController: TaskModificationViewControllerDelegate{
         taskTable.reloadSections([0, 1], with: .automatic)
     }
     func taskModificationViewController(_ viewController: UIViewController, didTapDeleteWithTask task: Task) {
+        for step in task.steps{
+            task.deleteStep(step: step)
+        }
         taskStore.deleteTask(task: task)
         taskTable.reloadSections([0, 1], with: .automatic)
     }

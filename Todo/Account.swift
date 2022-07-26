@@ -13,8 +13,8 @@ class Account: Object{
     @objc dynamic private var password: String = ""
     @objc dynamic private var isLoggedIn: Bool = false
     @objc dynamic private var id = NSUUID().uuidString
-    
     @objc dynamic private var currentThemeTypeRaw: Int = themeType.white.rawValue
+    
     private var currentThemeType: themeType!
     {
         get{
